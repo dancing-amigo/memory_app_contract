@@ -36,7 +36,7 @@ Each participating repository should include this repository as a submodule. Age
 Recommended submodule path:
 
 ```text
-docs/integration-contracts/memory_app_contract
+memory_app_contract
 ```
 
 ## Compatibility rule
