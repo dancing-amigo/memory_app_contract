@@ -30,8 +30,21 @@ Chat is responsible for:
 - chat-local thread, session, and message storage
 - deciding which messages or batches should be sent to Memory
 - formatting several chat messages into one memory-worthy input when appropriate
+- segmenting ongoing chat messages into conversation batches before ingestion
 - preserving chat-local identifiers in metadata
 - deciding how returned ContextPacks are used in prompts or UI
+
+## MemorySpace and Chat channel binding
+
+MemorySpace is the canonical concept. Chat exposes a MemorySpace as a channel, DM, or personal-agent DM. Other applications may expose the same MemorySpace through a different app-local object name.
+
+Chat's channel record is therefore an app-local binding to a MemorySpace:
+
+- `channel` maps to a shared MemorySpace for group conversation.
+- `dm` maps to a MemorySpace for the DM participants.
+- `personal_agent_dm` maps to the user's personal MemorySpace for user-agent conversation.
+
+Chat must not create users, teams, memberships, or MemorySpaces that exist only in Chat. User and space creation initiated from Chat should call Memory control-plane APIs first, then store or refresh the Chat projection/binding returned by Memory.
 
 ## Ingestion contract
 
@@ -52,20 +65,43 @@ Chat sends:
 
 Memory treats this as normal RawEvidence. `source_type` and `metadata.app_id` do not create a Chat-specific structural pipeline.
 
+Chat should normally ingest conversation segments, not each individual message. A conversation segment is an app-local batch of consecutive messages from one Chat channel/DM binding to one MemorySpace.
+
+Initial segment closing rules should be deterministic and app-local:
+
+- close on inactivity after a configured idle window, for example 24 or 48 hours without a new message
+- close when a configured message count, character count, or estimated token count threshold is reached
+- always cut on message boundaries; Chat must not split a single message across two segments
+- if adding one message crosses the size threshold, Chat may either close before that message or include that whole message and close after it; the chosen behavior must be consistent and represented in metadata
+- if a single message exceeds the threshold, the segment may exceed the threshold rather than splitting the message
+
+LLM-based topic boundary detection is optional future behavior. The initial contract does not require it.
+
 ## Required metadata for Chat ingestion
 
 Chat should include these metadata fields when available:
 
 - `app_id`: stable app identifier, initially `chat`
+- `app_space_binding_type`: Chat's app-local name for the MemorySpace binding, for example `channel`, `dm`, or `personal_agent_dm`
+- `memory_space_id`: the canonical MemorySpace id targeted by the ingestion
+- `chat_channel_id`: app-local channel or DM identifier
 - `chat_thread_id`: app-local thread identifier
 - `chat_message_ids`: source message identifiers included in the input
+- `conversation_segment_id`: app-local segment id when ingesting a batch
+- `segment_start_message_id`: first included message id when ingesting a batch
+- `segment_end_message_id`: last included message id when ingesting a batch
+- `segment_message_count`: number of messages included in the segment
+- `segment_char_count`: source character count represented by the segment
+- `segment_closed_reason`: for example `idle_timeout`, `size_threshold`, `manual`, or `backfill`
 - `speaker_roles`: roles represented in the input, for example `user` or `assistant`
 - `event_time`: source-side event time in ISO 8601 format
-- `transform`: how the text was produced, for example `single_message`, `batched_messages`, or `curated_memory_input`
+- `transform`: how the text was produced, for example `conversation_segment_transcript`, `conversation_segment_summary`, `single_message`, or `curated_memory_input`
 - `source_uri`: optional app-local deep link or stable reference
 - `content_checksum`: optional checksum of the original source text or batch
 
 If Chat sends a curated or summarized input instead of the full original transcript, metadata must make that explicit through `transform`.
+
+After Memory accepts a segment ingestion, Chat may lock the included messages from edit/delete in the app-local UI and API. This avoids requiring Memory to support message-level update/redaction as the default Chat integration path. Messages not yet included in an accepted segment remain app-local and may be edited according to Chat policy.
 
 ## Identity and space bootstrap
 
@@ -97,6 +133,8 @@ POST /v1/memory-views/{view_id}/context
 ```
 
 Every query must include a `requested_use` that describes how the result will be used. Memory must not return memory that policy does not allow for that use.
+
+Chat may combine returned Memory context with unsent app-local context from open or queued conversation segments. This local context overlay is not Memory output and must be filtered by Chat visibility/membership rules before use in prompts or UI. Chat should not send all unsent channel content by default; it should include only recent or relevant local context for the active user and task.
 
 ## What Chat must not do
 

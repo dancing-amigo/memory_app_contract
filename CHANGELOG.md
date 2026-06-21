@@ -6,3 +6,5 @@
 - Added the initial Chat to Memory boundary contract.
 - Added example Chat ingestion and context request payloads.
 - Standardized the participating repository submodule path as root-level `memory_app_contract/`.
+- Clarified that MemorySpace is the canonical concept and Chat channels/DMs are app-local bindings.
+- Added the conversation segment ingestion model, including message-boundary size cuts, idle closure, sent-message locking, and unsent local context overlay.

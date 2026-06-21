@@ -5,15 +5,24 @@
     "source_id": "chat-primary",
     "source_type": "chat_message_batch",
     "content": {
-      "text": "User said they want future planning answers to assume weekends are usually unavailable."
+      "text": "[2026-06-21T08:55:00Z] Alice: We should assume weekends are usually unavailable for the planning session.\n[2026-06-21T09:00:00Z] Bob: Agreed. Weekday afternoons are better for this team."
     },
     "metadata": {
       "app_id": "chat",
+      "memory_space_id": "space_project_planning",
+      "app_space_binding_type": "channel",
+      "chat_channel_id": "ch_project_planning",
       "chat_thread_id": "thread_123",
       "chat_message_ids": ["msg_001", "msg_002"],
+      "conversation_segment_id": "chatseg_20260621_001",
+      "segment_start_message_id": "msg_001",
+      "segment_end_message_id": "msg_002",
+      "segment_message_count": 2,
+      "segment_char_count": 186,
+      "segment_closed_reason": "idle_timeout",
       "speaker_roles": ["user"],
       "event_time": "2026-06-21T09:00:00Z",
-      "transform": "batched_messages",
+      "transform": "conversation_segment_transcript",
       "source_uri": "chat://threads/thread_123/messages/msg_002",
       "content_checksum": "sha256:example"
     },

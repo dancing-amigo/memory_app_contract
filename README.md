@@ -29,6 +29,15 @@ Applications own:
 - deciding when to write to Memory
 - deciding how to use returned memory context
 
+## Space naming model
+
+MemorySpace is the canonical collaboration and retrieval boundary. Applications may present a MemorySpace under an app-local name:
+
+- Chat presents a MemorySpace as a channel, DM, or personal-agent DM.
+- Another application may present the same MemorySpace as a project, folder, case, repository, or workspace.
+
+The app-local object is a binding to a MemorySpace, not a new canonical space concept.
+
 ## Operational model
 
 Each participating repository should include this repository as a submodule. Agents working in either repository must pull the submodule before relying on it, and push contract edits after committing them.
