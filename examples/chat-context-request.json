@@ -1,0 +1,9 @@
+{
+  "method": "POST",
+  "path": "/v1/memory-spaces/{space_id}/context",
+  "body": {
+    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "requested_use": "personalization",
+    "limit": 8
+  }
+}

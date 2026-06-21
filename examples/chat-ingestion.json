@@ -1,0 +1,26 @@
+{
+  "method": "POST",
+  "path": "/v1/memory-spaces/{space_id}/ingestions",
+  "body": {
+    "source_id": "chat-primary",
+    "source_type": "chat_message_batch",
+    "content": {
+      "text": "User said they want future planning answers to assume weekends are usually unavailable."
+    },
+    "metadata": {
+      "app_id": "chat",
+      "chat_thread_id": "thread_123",
+      "chat_message_ids": ["msg_001", "msg_002"],
+      "speaker_roles": ["user"],
+      "event_time": "2026-06-21T09:00:00Z",
+      "transform": "batched_messages",
+      "source_uri": "chat://threads/thread_123/messages/msg_002",
+      "content_checksum": "sha256:example"
+    },
+    "allowed_uses": ["personalization", "retrieval"],
+    "disallowed_uses": [],
+    "processing": {
+      "priority": "normal"
+    }
+  }
+}
