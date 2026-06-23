@@ -14,6 +14,7 @@ The first application contract is Chat:
 Memory owns:
 
 - canonical user, app, team, and membership semantics
+- app service credential and delegated actor authorization semantics
 - MemorySpace creation and lifecycle
 - MemoryView search boundaries
 - Source registration and trust metadata
@@ -28,6 +29,8 @@ Applications own:
 - batching and formatting before ingestion
 - deciding when to write to Memory
 - deciding how to use returned memory context
+
+Applications do not own canonical Memory identity. App-local users, channels, DMs, projects, or folders are bindings or projections over Memory-owned principals and resources.
 
 ## Space naming model
 

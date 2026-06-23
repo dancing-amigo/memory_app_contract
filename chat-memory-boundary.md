@@ -46,6 +46,35 @@ Chat's channel record is therefore an app-local binding to a MemorySpace:
 
 Chat must not create users, teams, memberships, or MemorySpaces that exist only in Chat. User and space creation initiated from Chat should call Memory control-plane APIs first, then store or refresh the Chat projection/binding returned by Memory.
 
+## Authentication and delegated actor contract
+
+Chat must authenticate to Memory as the Chat application, not as each individual Chat user.
+
+The required model is:
+
+```text
+Chat backend
+  -> Memory API
+     credential: Chat app service credential
+     delegated subject: on_behalf_of canonical Memory principal
+     target: MemorySpace or MemoryView
+```
+
+An app service credential proves the caller is Chat. It does not, by itself, authorize Chat to read or write every MemorySpace.
+
+Every Chat request that reads or writes user, DM, channel, or team memory must carry an explicit delegated subject, equivalent to `on_behalf_of`. Memory uses that delegated subject as the effective principal for membership and resource authorization.
+
+Memory authorization must check:
+
+- Chat app credential status and scope
+- Chat app registration / installation / binding
+- delegated principal existence
+- delegated principal membership or permission on the target MemorySpace or MemoryView
+- requested action: read, write, delete, export, or administer
+- requested_use for memory-use policy on reads
+
+Per-user Memory API keys stored by Chat are not the production integration model. If the bearer token is API-key-shaped, it is still semantically a Chat app service credential.
+
 ## Ingestion contract
 
 Chat should ingest through the generic Memory ingestion API:
@@ -114,7 +143,7 @@ Initial integration should use Memory's existing idempotent control-plane calls:
 3. register or resolve the Chat Source in that MemorySpace
 4. ingest RawEvidence into that MemorySpace
 
-Until Memory has full user, app, team, and membership APIs, Chat must not treat chat-local users or spaces as the canonical cross-app model.
+Until Memory has full user, app, team, and membership APIs, Chat must not treat chat-local users or spaces as the canonical cross-app model. A temporary owner-only development path may exist, but production Chat integration requires app service credential, delegated subject, and Memory-side membership authorization.
 
 ## Query contract
 
@@ -140,6 +169,8 @@ Chat may combine returned Memory context with unsent app-local context from open
 
 - Chat must not read Memory's internal database.
 - Chat must not define canonical MemorySpace, MemoryView, Policy, or membership semantics.
+- Chat must not store one Memory API key per Chat user as the production authentication model.
+- Chat must not rely on app credential alone to access arbitrary MemorySpaces.
 - Chat must not rely on Chat-specific atom types.
 - Chat must not expect Memory to change structural processing only because `app_id` is `chat`.
 - Chat must not promote assistant or external content into user Profile, Policy, or Procedure memory without Memory policy allowing it.
@@ -148,6 +179,8 @@ Chat may combine returned Memory context with unsent app-local context from open
 
 - Memory must not depend on Chat's database schema.
 - Memory must not require Chat-specific payload structure beyond generic content and metadata.
+- Memory must not treat an app service credential as blanket access to all user spaces.
+- Memory must not skip delegated membership checks for Chat reads or writes.
 - Memory must not expose cross-space memory without an explicit MemoryView or equivalent authorization boundary.
 - Memory must not return memory blocked by policy for the requested use.
 

@@ -2,9 +2,13 @@
 
 ## User, app, team, and membership model
 
-Memory should own canonical identity and membership, but the exact API shape is not finalized. The Memory repository should capture the final decision in an ADR before implementation.
+Memory owns canonical identity and membership. The Memory repository accepted this direction in ADR 0009.
 
 The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The remaining open question is the exact idempotent control-plane API shape Chat should call when its UI initiates user, space, or membership changes.
+
+## Delegated request transport
+
+Chat requests must carry a delegated subject equivalent to `on_behalf_of`. The exact transport field is not finalized. Candidate shapes include a typed request body field, an authenticated header, or a signed delegation envelope.
 
 ## MemoryView API
 
