@@ -9,6 +9,7 @@ The first application contract is Chat:
 - [Bootstrap Example](examples/chat-bootstrap.json)
 - [Ingestion Example](examples/chat-ingestion.json)
 - [Context Request Example](examples/chat-context-request.json)
+- [Ask Request and Response Example](examples/chat-ask.json)
 
 ## Source of truth
 

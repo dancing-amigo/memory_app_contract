@@ -34,7 +34,8 @@ Chat is responsible for:
 - formatting several chat messages into one memory-worthy input when appropriate
 - segmenting ongoing chat messages into conversation batches before ingestion
 - preserving chat-local identifiers in metadata
-- deciding how returned ContextPacks are used in prompts or UI
+- using Memory Ask responses for normal user-facing memory answers
+- deciding how returned Search results or ContextPacks are used in advanced prompts, tools, debug views, or UI
 
 ## MemorySpace and Chat channel binding
 
@@ -312,11 +313,12 @@ Official policy documents, admin-authored procedures, imported knowledge bases, 
 
 ## Query contract
 
-Chat should query Memory through generic APIs:
+Chat should query Memory through generic APIs with distinct levels of abstraction:
 
 ```text
 POST /v1/memory-spaces/{space_id}/search
 POST /v1/memory-spaces/{space_id}/context
+POST /v1/memory-spaces/{space_id}/ask
 ```
 
 When MemoryView APIs are available, Chat should prefer MemoryView for cross-space retrieval:
@@ -324,9 +326,73 @@ When MemoryView APIs are available, Chat should prefer MemoryView for cross-spac
 ```text
 POST /v1/memory-views/{view_id}/search
 POST /v1/memory-views/{view_id}/context
+POST /v1/memory-views/{view_id}/ask
 ```
 
+`ask` is the primary API for normal user-facing Chat questions that should receive a natural-language answer.
+
+`search` returns matching memory objects, primarily `MemoryAtom` hits with score, route, policy decision, and trace metadata. Chat should use `search` when it needs raw memory records for UI cards, inspection, manual selection, or custom application logic.
+
+`context` returns a `ContextPack`: direct evidence, related memories, summaries, claims, counter-evidence, source refs, provenance, warnings, and retrieval trace. Chat should use `context` when it wants to run its own answerer, perform tool/action grounding, show an evidence/debug view, or inspect why `ask` answered the way it did.
+
+`ask` assembles or reuses a ContextPack, generates a grounded answer inside Memory, and returns the answer plus audit fields. Memory must not answer from evidence that was filtered out by resource authorization or memory-use policy.
+
 Every query must include a `requested_use` that describes how the result will be used. Memory must not return memory that policy does not allow for that use.
+
+For normal user-facing natural-language answers, Chat should use `requested_use: "answer_generation"` unless a more specific registered use is required by the MemoryPack or Policy. If the requested use is not registered or is not allowed, Memory must fail closed or return no usable evidence without revealing blocked memory.
+
+Minimum `ask` request body:
+
+```json
+{
+  "query": "What should the assistant remember before helping schedule the project planning session?",
+  "requested_use": "answer_generation",
+  "limit": 8,
+  "include_context": false
+}
+```
+
+Minimum successful `ask` response body:
+
+```json
+{
+  "answer_id": "ans_001",
+  "memory_resource": {
+    "type": "memory_space",
+    "id": "space_chat_channel_ch_project_planning"
+  },
+  "query": "What should the assistant remember before helping schedule the project planning session?",
+  "requested_use": "answer_generation",
+  "answer": {
+    "status": "answered",
+    "text": "The team generally treats weekends as unavailable for planning sessions, and weekday afternoons are preferred.",
+    "language": "en"
+  },
+  "missing_evidence": false,
+  "cannot_answer_reason": null,
+  "confidence": "high",
+  "context_pack_id": "ctx_001",
+  "used_evidence_ids": ["mem_001", "mem_002"],
+  "citations": [
+    {
+      "evidence_type": "memory_atom",
+      "evidence_id": "mem_001",
+      "source_refs": [
+        {
+          "raw_evidence_id": "raw_001",
+          "source_id": "src_chat_segments"
+        }
+      ]
+    }
+  ],
+  "warnings": [],
+  "trace_id": "trace_001"
+}
+```
+
+If Memory cannot answer from allowed evidence, it should return an `answer.status` of `insufficient_evidence`, `missing_evidence: true`, an explanatory `cannot_answer_reason`, empty `used_evidence_ids`, and no fabricated answer. Authorization failures should still use the normal API error path rather than an `ask` answer body.
+
+When `include_context` is `true`, Memory may include the assembled `context_pack` alongside `context_pack_id`. The default response should keep the full ContextPack out of the normal Chat payload and expose it through the separate `context` API or trace/debug workflows.
 
 Chat may combine returned Memory context with unsent app-local context from open or queued conversation segments. This local context overlay is not Memory output and must be filtered by Chat visibility/membership rules before use in prompts or UI. Chat should not send all unsent channel content by default; it should include only recent or relevant local context for the active user and task.
 

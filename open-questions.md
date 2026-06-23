@@ -17,7 +17,3 @@ Chat should ingest conversation segments and cut them only on message boundaries
 ## Locked message exceptions
 
 The default Chat policy can make messages immutable after their segment is accepted by Memory. Any exceptional delete/redaction workflow for legal, security, or administrative requirements still needs a separate policy decision.
-
-## Ask API
-
-The Memory docs describe search, context, and ask as separate surfaces. The initial implemented app contract should use search/context until the ask API is implemented and documented.
