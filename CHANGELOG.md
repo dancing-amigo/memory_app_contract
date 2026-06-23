@@ -2,6 +2,7 @@
 
 ## 2026-06-23
 
+- Clarified that pre-acceptance edits update segment content without resetting the segment idle close window.
 - Clarified that Chat's default edit/delete lock is Memory acceptance, not a separate pre-acceptance time window.
 - Fixed the default Chat conversation segment idle close window at 72 hours while keeping size thresholds app-configurable.
 - Added the Chat Ask API contract with `/ask` endpoints, request shape, grounded natural-language response shape, citation/evidence fields, and insufficient-evidence behavior.
