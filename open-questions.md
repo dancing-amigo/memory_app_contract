@@ -12,6 +12,12 @@ Resolved for initial search/context: Memory exposes `POST /v1/memory-views/{view
 
 Still open: `POST /v1/memory-views/{view_id}/ask` is accepted in the contract but depends on the Memory answerer runtime.
 
+## Owner-containment query scope
+
+Resolved for initial search/context: Memory exposes `POST /v1/memory-scopes/owner-containment/search` and `POST /v1/memory-scopes/owner-containment/context`.
+
+Still open: owner-containment `ask` depends on the Memory answerer runtime.
+
 ## Segment size thresholds
 
 Chat should ingest conversation segments and cut them only on message boundaries. The default idle close window is fixed at 72 hours without a new message in the channel/DM. Exact production size thresholds remain tunable per app, with message-count, character-count, or token-count thresholds allowed for long uninterrupted conversations.

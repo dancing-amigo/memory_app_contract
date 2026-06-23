@@ -332,6 +332,15 @@ POST /v1/memory-views/{view_id}/ask
 
 Memory's 2026-06-23 initial MemoryView runtime implements `search` and `context`. `ask` remains part of the accepted contract but depends on the Memory answerer runtime.
 
+When Chat wants Memory to derive the cross-space evidence range from the request origin, it can use owner-containment scope:
+
+```text
+POST /v1/memory-scopes/owner-containment/search
+POST /v1/memory-scopes/owner-containment/context
+```
+
+The request body includes `request_origin`, for example `{ "type": "user", "id": "user_001" }` or `{ "type": "team", "id": "team_001" }`. A user origin resolves the user's own MemorySpaces plus containing team / organization MemorySpaces. A team origin resolves team plus containing organization MemorySpaces and does not include member personal MemorySpaces by default.
+
 `ask` is the primary API for normal user-facing Chat questions that should receive a natural-language answer.
 
 `search` returns matching memory objects, primarily `MemoryAtom` hits with score, route, policy decision, and trace metadata. Chat should use `search` when it needs raw memory records for UI cards, inspection, manual selection, or custom application logic.

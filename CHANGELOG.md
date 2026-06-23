@@ -2,6 +2,7 @@
 
 ## 2026-06-23
 
+- Added owner-containment `search` / `context` scope for deriving user/team/organization evidence range from `request_origin`.
 - Marked initial MemoryView `search` / `context` endpoints as implemented in Memory runtime, while keeping MemoryView `ask` pending on answerer runtime.
 - Clarified that pre-acceptance edits update segment content without resetting the segment idle close window.
 - Clarified that Chat's default edit/delete lock is Memory acceptance, not a separate pre-acceptance time window.
