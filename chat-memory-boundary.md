@@ -155,7 +155,7 @@ Chat should include these metadata fields when available:
 
 If Chat sends a curated or summarized input instead of the full original transcript, metadata must make that explicit through `transform`.
 
-After Memory accepts a segment ingestion, Chat may lock the included messages from edit/delete in the app-local UI and API. This avoids requiring Memory to support message-level update/redaction as the default Chat integration path. Messages not yet included in an accepted segment remain app-local and may be edited according to Chat policy.
+After Memory accepts a segment ingestion, Chat may lock the included messages from edit/delete in the app-local UI and API. This avoids requiring Memory to support message-level update/redaction as the default Chat integration path. Messages not yet included in an accepted segment remain app-local; the default Chat policy allows normal edit/delete until Memory accepts the containing segment. Any product-specific pre-acceptance edit window is independent of Memory correctness.
 
 ## Identity and space bootstrap
 
