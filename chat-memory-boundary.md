@@ -322,13 +322,15 @@ POST /v1/memory-spaces/{space_id}/context
 POST /v1/memory-spaces/{space_id}/ask
 ```
 
-When MemoryView APIs are available, Chat should prefer MemoryView for cross-space retrieval:
+For cross-space retrieval, Chat should prefer MemoryView:
 
 ```text
 POST /v1/memory-views/{view_id}/search
 POST /v1/memory-views/{view_id}/context
 POST /v1/memory-views/{view_id}/ask
 ```
+
+Memory's 2026-06-23 initial MemoryView runtime implements `search` and `context`. `ask` remains part of the accepted contract but depends on the Memory answerer runtime.
 
 `ask` is the primary API for normal user-facing Chat questions that should receive a natural-language answer.
 

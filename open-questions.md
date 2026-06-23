@@ -8,7 +8,9 @@ The contract assumes Chat will not maintain users, teams, memberships, or Memory
 
 ## MemoryView API
 
-Cross-space retrieval should happen through MemoryView, but the public MemoryView API shape is not finalized.
+Resolved for initial search/context: Memory exposes `POST /v1/memory-views/{view_id}/search` and `POST /v1/memory-views/{view_id}/context`.
+
+Still open: `POST /v1/memory-views/{view_id}/ask` is accepted in the contract but depends on the Memory answerer runtime.
 
 ## Segment size thresholds
 
