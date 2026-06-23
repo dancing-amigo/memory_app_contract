@@ -1,0 +1,37 @@
+{
+  "method": "POST",
+  "path": "/v1/app-bindings/bootstrap",
+  "headers": {
+    "Authorization": "Bearer mem_app_live_example.secret",
+    "X-Memory-On-Behalf-Of-Type": "user",
+    "X-Memory-On-Behalf-Of-Id": "user_001",
+    "Idempotency-Key": "chat:channel:ch_project_planning"
+  },
+  "body": {
+    "app_resource": {
+      "type": "channel",
+      "id": "ch_project_planning",
+      "display_name": "Project Planning",
+      "source_uri": "chat://channels/ch_project_planning",
+      "metadata": {
+        "workspace_id": "ws_001"
+      }
+    },
+    "memory_space": {
+      "id": "space_chat_channel_ch_project_planning",
+      "name": "Project Planning",
+      "owner": { "type": "team", "id": "team_001" },
+      "memory_pack_id": "company_agent_v1",
+      "storage_binding_id": "storage_team_001",
+      "policy_profile_id": "team_private_memory_v1",
+      "model_profile_id": "default_ja_memory_v1"
+    },
+    "memberships": [
+      {
+        "principal": { "type": "user", "id": "user_001" },
+        "permissions": ["read", "write", "delete", "admin"]
+      }
+    ],
+    "source_template": "chat_workspace_segment_source_v1"
+  }
+}

@@ -1,9 +1,15 @@
 {
   "method": "POST",
   "path": "/v1/memory-spaces/{space_id}/context",
+  "headers": {
+    "Authorization": "Bearer mem_app_live_example.secret",
+    "X-Memory-On-Behalf-Of-Type": "user",
+    "X-Memory-On-Behalf-Of-Id": "user_001",
+    "X-Memory-App-Binding-Id": "bind_chat_channel_ch_project_planning"
+  },
   "body": {
     "query": "What should the assistant remember before helping the user schedule a project planning session?",
-    "requested_use": "personalization",
+    "requested_use": "project_context",
     "limit": 8
   }
 }

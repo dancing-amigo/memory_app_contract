@@ -1,9 +1,15 @@
 {
   "method": "POST",
   "path": "/v1/memory-spaces/{space_id}/ingestions",
+  "headers": {
+    "Authorization": "Bearer mem_app_live_example.secret",
+    "X-Memory-On-Behalf-Of-Type": "user",
+    "X-Memory-On-Behalf-Of-Id": "user_001",
+    "X-Memory-App-Binding-Id": "bind_chat_channel_ch_project_planning"
+  },
   "body": {
-    "source_id": "chat-primary",
-    "source_type": "chat_message_batch",
+    "source_id": "src_chat_segments",
+    "source_type": "chat_conversation_segment",
     "content": {
       "text": "[2026-06-21T08:55:00Z] Alice: We should assume weekends are usually unavailable for the planning session.\n[2026-06-21T09:00:00Z] Bob: Agreed. Weekday afternoons are better for this team."
     },
@@ -26,10 +32,11 @@
       "source_uri": "chat://threads/thread_123/messages/msg_002",
       "content_checksum": "sha256:example"
     },
-    "allowed_uses": ["personalization", "retrieval"],
+    "allowed_uses": ["search", "answer_generation", "reflection", "project_context"],
     "disallowed_uses": [],
     "processing": {
-      "priority": "normal"
+      "mode": "async",
+      "pipeline": "default"
     }
   }
 }

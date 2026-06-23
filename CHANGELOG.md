@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-23
+
+- Fixed app integration HTTP contract: delegated actor headers, `mem_app_live_` AppCredential, `POST /v1/app-bindings/bootstrap`, membership permissions, and Chat Source templates.
+
 ## 2026-06-21
 
 - Created the initial shared Memory application contract repository.

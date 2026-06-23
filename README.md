@@ -6,6 +6,7 @@ The first application contract is Chat:
 
 - [Chat to Memory Boundary](chat-memory-boundary.md)
 - [Open Questions](open-questions.md)
+- [Bootstrap Example](examples/chat-bootstrap.json)
 - [Ingestion Example](examples/chat-ingestion.json)
 - [Context Request Example](examples/chat-context-request.json)
 
@@ -31,6 +32,16 @@ Applications own:
 - deciding how to use returned memory context
 
 Applications do not own canonical Memory identity. App-local users, channels, DMs, projects, or folders are bindings or projections over Memory-owned principals and resources.
+
+## Fixed app integration contract
+
+The current app integration contract uses:
+
+- `Authorization: Bearer <mem_app_live_...>` for app service credential authentication
+- `X-Memory-On-Behalf-Of-Type` and `X-Memory-On-Behalf-Of-Id` for delegated actor context
+- `POST /v1/app-bindings/bootstrap` for idempotent app-local resource binding
+- `read`, `write`, `delete`, `export`, `admin` as the minimum membership permissions
+- `chat_conversation_segment` as the Chat conversation segment `source_type`
 
 ## Space naming model
 

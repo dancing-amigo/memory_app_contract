@@ -2,13 +2,15 @@
 
 ## Status
 
-Draft contract. This document describes the intended boundary between the Chat application and the Memory System.
+Stabilized v1 contract. This document describes the intended boundary between the Chat application and the Memory System.
 
 ## Core principle
 
 Chat sends memory-worthy input plus provenance metadata. Memory stores the input in the correct MemorySpace, applies policy, derives memory through its normal pipeline, and returns only memory the requesting app is allowed to use.
 
 Memory must not become a Chat-specific backend. Chat must not become the canonical owner of users, spaces, memberships, or cross-app memory policy.
+
+This contract is stable enough for Chat implementation. Future changes must be backward compatible unless this repository records a breaking contract change.
 
 ## Responsibility split
 
@@ -64,6 +66,17 @@ An app service credential proves the caller is Chat. It does not, by itself, aut
 
 Every Chat request that reads or writes user, DM, channel, or team memory must carry an explicit delegated subject, equivalent to `on_behalf_of`. Memory uses that delegated subject as the effective principal for membership and resource authorization.
 
+Delegation is transported in typed HTTP headers:
+
+```http
+Authorization: Bearer <app_service_credential>
+X-Memory-On-Behalf-Of-Type: user
+X-Memory-On-Behalf-Of-Id: user_001
+X-Memory-App-Binding-Id: bind_chat_channel_001
+```
+
+`X-Memory-App-Binding-Id` is optional during first bootstrap and recommended after a binding exists.
+
 Memory authorization must check:
 
 - Chat app credential status and scope
@@ -73,7 +86,18 @@ Memory authorization must check:
 - requested action: read, write, delete, export, or administer
 - requested_use for memory-use policy on reads
 
-Per-user Memory API keys stored by Chat are not the production integration model. If the bearer token is API-key-shaped, it is still semantically a Chat app service credential.
+Per-user Memory API keys stored by Chat are not the production integration model. The production app service credential is an API-key-shaped bearer token with `mem_app_live_` prefix. If Memory reuses API key hashing internally, the token is still semantically a Chat app service credential, not a user key.
+
+Initial app credential scopes are:
+
+- `memory:bootstrap`
+- `memory:read`
+- `memory:write`
+- `memory:delete`
+- `memory:export`
+- `memory:admin`
+
+Scopes authorize API families. They do not replace MemorySpace or MemoryView membership checks.
 
 ## Ingestion contract
 
@@ -86,7 +110,7 @@ POST /v1/memory-spaces/{space_id}/ingestions
 Chat sends:
 
 - `source_id`: the registered Source for the Chat stream
-- `source_type`: a provenance type such as `chat_message_batch`
+- `source_type`: `chat_conversation_segment`
 - `content.text`: the memory-worthy input
 - `metadata`: app provenance and traceability fields
 - `allowed_uses` / `disallowed_uses`: optional use constraints
@@ -136,7 +160,51 @@ After Memory accepts a segment ingestion, Chat may lock the included messages fr
 
 Chat may pass app-local identifiers as metadata, but canonical memory identity belongs to Memory.
 
-Initial integration should use Memory's existing idempotent control-plane calls:
+Production integration should use the app binding bootstrap API:
+
+```http
+POST /v1/app-bindings/bootstrap
+Authorization: Bearer <app_service_credential>
+X-Memory-On-Behalf-Of-Type: user
+X-Memory-On-Behalf-Of-Id: user_001
+Idempotency-Key: chat:channel:ch_123
+```
+
+Request body:
+
+```json
+{
+  "app_resource": {
+    "type": "channel",
+    "id": "ch_123",
+    "display_name": "Project Planning",
+    "source_uri": "chat://channels/ch_123",
+    "metadata": {
+      "workspace_id": "ws_001"
+    }
+  },
+  "memory_space": {
+    "id": "space_chat_channel_ch_123",
+    "name": "Project Planning",
+    "owner": { "type": "team", "id": "team_001" },
+    "memory_pack_id": "company_agent_v1",
+    "storage_binding_id": "storage_team_001",
+    "policy_profile_id": "team_private_memory_v1",
+    "model_profile_id": "default_ja_memory_v1"
+  },
+  "memberships": [
+    {
+      "principal": { "type": "user", "id": "user_001" },
+      "permissions": ["read", "write", "delete", "admin"]
+    }
+  ],
+  "source_template": "chat_workspace_segment_source_v1"
+}
+```
+
+The bootstrap response returns the resolved app binding, MemorySpace, Source, memberships, and created/resolved flags.
+
+Temporary owner-only development integration may use Memory's existing idempotent control-plane calls:
 
 1. create or resolve the canonical Memory owner
 2. create or resolve the required MemorySpace
@@ -144,6 +212,103 @@ Initial integration should use Memory's existing idempotent control-plane calls:
 4. ingest RawEvidence into that MemorySpace
 
 Until Memory has full user, app, team, and membership APIs, Chat must not treat chat-local users or spaces as the canonical cross-app model. A temporary owner-only development path may exist, but production Chat integration requires app service credential, delegated subject, and Memory-side membership authorization.
+
+## Membership permissions
+
+Minimum Memory resource permissions are:
+
+- `read`: search, context, view read, job status, non-export read APIs
+- `write`: ingestion and feedback
+- `delete`: delete propagation and redaction requests
+- `export`: export APIs
+- `admin`: Source, membership, app binding, policy, MemorySpace, and MemoryView configuration
+
+Permissions are independent. `admin` does not automatically grant content `read`, `write`, `delete`, or `export`.
+
+## Chat Source templates
+
+All Chat conversation segment Sources use:
+
+```json
+{
+  "id": "src_chat_segments",
+  "source_type": "chat_conversation_segment",
+  "display_name": "Chat conversation segments"
+}
+```
+
+For personal-agent DM or direct user-agent memory with `personal_diary_v1`, use `chat_personal_segment_source_v1`:
+
+```json
+{
+  "trust_zone": 1,
+  "source_authority": "user_utterance",
+  "allowed_memory_writes": [
+    "observation",
+    "decision",
+    "open_loop",
+    "preference_evidence",
+    "profile_candidate",
+    "policy_candidate",
+    "procedure_candidate"
+  ],
+  "disallowed_memory_writes": [
+    "user_profile",
+    "user_preference",
+    "policy",
+    "procedure"
+  ],
+  "default_allowed_uses": [
+    "search",
+    "answer_generation",
+    "reflection",
+    "project_context"
+  ],
+  "default_disallowed_uses": [
+    "training",
+    "external_share",
+    "auto_action"
+  ],
+  "default_sensitivity": "normal"
+}
+```
+
+For channel, group DM, or workspace/team memory with `company_agent_v1`, use `chat_workspace_segment_source_v1`:
+
+```json
+{
+  "trust_zone": 2,
+  "source_authority": "workspace_member_conversation",
+  "allowed_memory_writes": [
+    "observation",
+    "decision",
+    "open_loop",
+    "preference_evidence",
+    "policy_candidate",
+    "procedure_candidate"
+  ],
+  "disallowed_memory_writes": [
+    "policy",
+    "procedure"
+  ],
+  "default_allowed_uses": [
+    "search",
+    "answer_generation",
+    "reflection",
+    "project_context"
+  ],
+  "default_disallowed_uses": [
+    "training",
+    "external_share",
+    "auto_action",
+    "profile_update",
+    "company_policy_lookup"
+  ],
+  "default_sensitivity": "normal"
+}
+```
+
+Official policy documents, admin-authored procedures, imported knowledge bases, or external participants must use different Source templates.
 
 ## Query contract
 
