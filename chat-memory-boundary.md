@@ -123,7 +123,7 @@ Chat should normally ingest conversation segments, not each individual message. 
 
 Initial segment closing rules should be deterministic and app-local:
 
-- close on inactivity after a configured idle window, for example 24 or 48 hours without a new message
+- close on inactivity after a configured idle window; the default Chat idle window is 72 hours without a new message in the channel/DM
 - close when a configured message count, character count, or estimated token count threshold is reached
 - always cut on message boundaries; Chat must not split a single message across two segments
 - if adding one message crosses the size threshold, Chat may either close before that message or include that whole message and close after it; the chosen behavior must be consistent and represented in metadata

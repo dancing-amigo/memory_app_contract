@@ -10,9 +10,9 @@ The contract assumes Chat will not maintain users, teams, memberships, or Memory
 
 Cross-space retrieval should happen through MemoryView, but the public MemoryView API shape is not finalized.
 
-## Segment thresholds
+## Segment size thresholds
 
-Chat should ingest conversation segments and cut them only on message boundaries. The exact default idle window and size threshold are not finalized. Candidate defaults are 24 or 48 hours for idle close, plus a character/token/message-count threshold for long uninterrupted conversations.
+Chat should ingest conversation segments and cut them only on message boundaries. The default idle close window is fixed at 72 hours without a new message in the channel/DM. Exact production size thresholds remain tunable per app, with message-count, character-count, or token-count thresholds allowed for long uninterrupted conversations.
 
 ## Locked message exceptions
 
