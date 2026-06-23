@@ -330,7 +330,7 @@ POST /v1/memory-views/{view_id}/context
 POST /v1/memory-views/{view_id}/ask
 ```
 
-Memory's 2026-06-23 initial MemoryView runtime implements `search` and `context`. `ask` remains part of the accepted contract but depends on the Memory answerer runtime.
+Memory's 2026-06-23 initial MemoryView runtime implements `search`, `context`, and `ask`. `ask` assembles a ContextPack inside Memory and passes the query plus ContextPack to the Memory answerer runtime.
 
 When Chat wants Memory to derive the cross-space evidence range from the request origin, it can use owner-containment scope:
 
