@@ -337,6 +337,7 @@ When Chat wants Memory to derive the cross-space evidence range from the request
 ```text
 POST /v1/memory-scopes/owner-containment/search
 POST /v1/memory-scopes/owner-containment/context
+POST /v1/memory-scopes/owner-containment/ask
 ```
 
 The request body includes `request_origin`, for example `{ "type": "user", "id": "user_001" }` or `{ "type": "team", "id": "team_001" }`. A user origin resolves the user's own MemorySpaces plus containing team / organization MemorySpaces. A team origin resolves team plus containing organization MemorySpaces and does not include member personal MemorySpaces by default.
