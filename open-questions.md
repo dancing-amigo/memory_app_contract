@@ -6,17 +6,11 @@ Memory owns canonical identity and membership. The Memory repository accepted th
 
 The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The idempotent bootstrap API shape is fixed in `chat-memory-boundary.md`.
 
-## MemoryView API
+## Query API status
 
-Resolved for initial search/context: Memory exposes `POST /v1/memory-views/{view_id}/search` and `POST /v1/memory-views/{view_id}/context`.
+Resolved for initial runtime: Memory exposes `search`, `context`, and `ask` for single MemorySpace, MemoryView, and owner-containment query scope.
 
-Still open: `POST /v1/memory-views/{view_id}/ask` is accepted in the contract but depends on the Memory answerer runtime.
-
-## Owner-containment query scope
-
-Resolved for initial search/context: Memory exposes `POST /v1/memory-scopes/owner-containment/search` and `POST /v1/memory-scopes/owner-containment/context`.
-
-Still open: owner-containment `ask` depends on the Memory answerer runtime.
+Remaining production work lives in the Memory repository: broader delegated Chat ingestion/query integration tests, answer quality evaluation, and no-leak tests for MemoryView and owner-containment `ask`.
 
 ## Segment size thresholds
 

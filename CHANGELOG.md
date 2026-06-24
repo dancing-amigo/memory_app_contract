@@ -2,6 +2,7 @@
 
 ## 2026-06-23
 
+- Resolved stale open questions for MemoryView `ask` and owner-containment `ask` now that Memory marks those initial runtime endpoints as implemented.
 - Added owner-containment `search` / `context` / `ask` scope for deriving user/team/organization evidence range from `request_origin`.
 - Marked initial MemoryView `search` / `context` / `ask` endpoints as implemented in Memory runtime.
 - Clarified that pre-acceptance edits update segment content without resetting the segment idle close window.
