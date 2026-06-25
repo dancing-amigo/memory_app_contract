@@ -29,7 +29,7 @@
     "memberships": [
       {
         "principal": { "type": "user", "id": "user_001" },
-        "permissions": ["read", "write", "delete", "admin"]
+        "permissions": ["read", "write", "delete", "export", "admin"]
       }
     ],
     "source_template": "chat_workspace_segment_source_v1"

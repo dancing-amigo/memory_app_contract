@@ -2,6 +2,8 @@
 
 ## 2026-06-25
 
+- Added strict principal and membership contract docs for Memory and Chat, including the rationale for Memory-owned canonical identity, app user readiness states, membership synchronization, removal semantics, owner-containment filtering, and implementation gaps.
+- Clarified that app-bound operations must send `X-Memory-App-Binding-Id` after bootstrap, and updated the Chat bootstrap example to grant `export` explicitly when showing owner/admin-style permissions.
 - Restructured the contract around Memory as the core shared surface: added `memory/README.md`, moved the app integration guide to `memory/app-integration.md`, and made root `README.md` a read-order and layout index.
 - Moved Chat-specific contract material under `apps/chat/`, including the Chat boundary and JSON examples, with short compatibility notes at the old top-level paths.
 - Added the practical app integration call sequence, now located at `memory/app-integration.md`: backend configuration, credential transport, delegated actor headers, bootstrap, ingestion, job polling, retrieval, deletion, and a minimal backend helper.

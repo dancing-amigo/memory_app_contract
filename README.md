@@ -17,6 +17,7 @@ The first app contract is Chat:
 
 - [Chat app contract](apps/chat/README.md)
 - [Chat to Memory boundary](apps/chat/boundary.md)
+- [Chat principal and membership contract](apps/chat/principals-and-membership.md)
 - [Chat bootstrap example](apps/chat/examples/chat-bootstrap.json)
 - [Chat ingestion example](apps/chat/examples/chat-ingestion.json)
 - [Chat context request example](apps/chat/examples/chat-context-request.json)

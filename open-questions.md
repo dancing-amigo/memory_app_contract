@@ -1,12 +1,12 @@
 # Open Questions
 
-## User, app, team, and membership model
+## Production blockers
 
 Memory owns canonical identity and membership. The Memory repository accepted this direction in ADR 0009.
 
 The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The idempotent bootstrap API shape is fixed in `apps/chat/boundary.md`.
 
-Production readiness now depends on Memory exposing canonical principal create/resolve behavior that Chat can call before activating a memory-capable local user. A local-only Chat user must be treated as pending or degraded, not as a delegated Memory principal.
+Production readiness depends on Memory exposing canonical principal create/resolve behavior that Chat can call before activating a memory-capable local user. A local-only Chat user must be treated as pending or degraded, not as a delegated Memory principal. The required behavior is described in `memory/principals-and-membership.md`.
 
 Membership removal also needs explicit production semantics. Either app binding bootstrap must support a clearly marked full membership snapshot that deactivates omitted principals, or Memory must expose an explicit membership revoke/full-reconcile API. Additive bootstrap alone is not enough for Chat channel membership correctness.
 

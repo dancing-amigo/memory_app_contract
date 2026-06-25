@@ -10,6 +10,7 @@ Read the core Memory contract first:
 Then use these Chat-specific documents and examples:
 
 - [Chat to Memory boundary](boundary.md)
+- [Chat principal and membership contract](principals-and-membership.md)
 - [Bootstrap example](examples/chat-bootstrap.json)
 - [Ingestion example](examples/chat-ingestion.json)
 - [Context request example](examples/chat-context-request.json)

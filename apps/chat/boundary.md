@@ -6,6 +6,8 @@ Stabilized v1 contract. This document describes the intended boundary between th
 
 Read `../../memory/README.md` first for the app-independent Memory contract. This document only records the Chat-specific binding, ingestion, and usage rules.
 
+Read `../../memory/principals-and-membership.md` and `principals-and-membership.md` for the rationale and strict principal / membership contract.
+
 ## Core principle
 
 Chat sends memory-worthy input plus provenance metadata. Memory stores the input in the correct MemorySpace, applies policy, derives memory through its normal pipeline, and returns only memory the requesting app is allowed to use.
@@ -80,7 +82,7 @@ X-Memory-On-Behalf-Of-Id: user_001
 X-Memory-App-Binding-Id: bind_chat_channel_001
 ```
 
-`X-Memory-App-Binding-Id` is optional during first bootstrap and recommended after a binding exists.
+`X-Memory-App-Binding-Id` is absent during first bootstrap because the binding does not exist yet. After bootstrap, app-bound Chat reads and writes must send it.
 
 Memory authorization must check:
 
@@ -201,7 +203,7 @@ Request body:
   "memberships": [
     {
       "principal": { "type": "user", "id": "user_001" },
-      "permissions": ["read", "write", "delete", "admin"]
+      "permissions": ["read", "write", "delete", "export", "admin"]
     }
   ],
   "source_template": "chat_workspace_segment_source_v1"
@@ -221,7 +223,7 @@ Until Memory has full user, app, team, and membership APIs, Chat must not treat 
 
 ## Membership synchronization and revocation
 
-Chat channel membership and Memory resource membership are separate records, but they must not diverge in production.
+Chat channel membership and Memory resource membership are separate records, but they must not diverge in production. The design rationale and strict app behavior are defined in `principals-and-membership.md`.
 
 Every Chat membership transition that changes who can read or write a channel or DM must be reflected in Memory:
 

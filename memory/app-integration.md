@@ -44,7 +44,7 @@ X-Memory-On-Behalf-Of-Id: user_001
 X-Memory-App-Binding-Id: bind_chat_channel_ch_project_planning
 ```
 
-`X-Memory-App-Binding-Id` is optional during first bootstrap and recommended after the binding exists.
+`X-Memory-App-Binding-Id` is absent during first bootstrap because the binding does not exist yet. After bootstrap, app-bound MemorySpace operations must send it so Memory can audit and authorize the request in app-binding context.
 
 The app credential scopes allow the app to call API families. They do not replace MemorySpace or MemoryView membership checks for the delegated principal.
 
@@ -231,8 +231,11 @@ Before enabling production traffic:
 
 - Memory app credential is stored server-side only.
 - The app sends delegated actor headers on user/team resource calls.
+- The app does not use unresolved local users as delegated Memory principals.
 - Bootstrap is idempotent and the app persists the returned binding.
+- App-bound requests include `X-Memory-App-Binding-Id` after bootstrap succeeds.
 - Ingestion includes `content.type: "text"` and source metadata.
+- Membership add, removal, deactivation, auto-join, and role changes are durably synchronized to Memory.
 - Async jobs are polled to `succeeded` before local source messages are locked.
 - Reads always include `requested_use`.
 - Cross-space reads use MemoryView or owner-containment APIs, never direct database access.

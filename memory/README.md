@@ -78,6 +78,10 @@ Use `search` for raw memory records, `context` for ContextPacks and provenance, 
 
 Every read must include `requested_use`. Memory must not return memory that is unauthorized for the delegated principal or blocked by policy for the requested use.
 
+## Principal and membership model
+
+Memory owns canonical principal and membership state so memories can be reused safely across applications. Read [Principals and Membership Contract](principals-and-membership.md) before implementing app user provisioning, app binding bootstrap, membership sync, or cross-space retrieval.
+
 ## App-specific extensions
 
 An app may define app-local Source types and metadata conventions, such as Chat's `chat_conversation_segment`. These identify provenance and traceability. They must not cause Memory to branch structurally by app name.
