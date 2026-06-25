@@ -4,7 +4,7 @@
 
 Memory owns canonical identity and membership. The Memory repository accepted this direction in ADR 0009.
 
-The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The idempotent bootstrap API shape is fixed in `chat-memory-boundary.md`.
+The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The idempotent bootstrap API shape is fixed in `apps/chat/boundary.md`.
 
 Production readiness now depends on Memory exposing canonical principal create/resolve behavior that Chat can call before activating a memory-capable local user. A local-only Chat user must be treated as pending or degraded, not as a delegated Memory principal.
 

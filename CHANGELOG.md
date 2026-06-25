@@ -2,7 +2,9 @@
 
 ## 2026-06-25
 
-- Added `usage-guide.md` with the practical app integration call sequence: backend configuration, credential transport, delegated actor headers, bootstrap, ingestion, job polling, retrieval, deletion, and a minimal backend helper.
+- Restructured the contract around Memory as the core shared surface: added `memory/README.md`, moved the app integration guide to `memory/app-integration.md`, and made root `README.md` a read-order and layout index.
+- Moved Chat-specific contract material under `apps/chat/`, including the Chat boundary and JSON examples, with short compatibility notes at the old top-level paths.
+- Added the practical app integration call sequence, now located at `memory/app-integration.md`: backend configuration, credential transport, delegated actor headers, bootstrap, ingestion, job polling, retrieval, deletion, and a minimal backend helper.
 - Documented `X-Api-Key` as the Memory credential transport when deployment infrastructure already uses the `Authorization` header.
 - Fixed the Chat ingestion example to include `content.type: "text"`.
 - Clarified that production Chat users must be provisioned as canonical Memory principals before becoming active memory-capable users.

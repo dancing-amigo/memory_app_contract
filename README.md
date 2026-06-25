@@ -2,15 +2,34 @@
 
 This repository is the shared integration contract for the Memory System and applications that use it.
 
-The first application contract is Chat:
+Memory is the center of this contract. App contracts describe how each application binds its local concepts to Memory-owned primitives without redefining Memory semantics.
 
-- [Chat to Memory Boundary](chat-memory-boundary.md)
-- [How to Use Memory from an App](usage-guide.md)
-- [Open Questions](open-questions.md)
-- [Bootstrap Example](examples/chat-bootstrap.json)
-- [Ingestion Example](examples/chat-ingestion.json)
-- [Context Request Example](examples/chat-context-request.json)
-- [Ask Request and Response Example](examples/chat-ask.json)
+## Read order
+
+Agents integrating an application with Memory should read:
+
+1. [Memory core contract](memory/README.md)
+2. [Memory app integration guide](memory/app-integration.md)
+3. The relevant app contract under [apps/](apps/README.md)
+4. [Open questions](open-questions.md)
+
+The first app contract is Chat:
+
+- [Chat app contract](apps/chat/README.md)
+- [Chat to Memory boundary](apps/chat/boundary.md)
+- [Chat bootstrap example](apps/chat/examples/chat-bootstrap.json)
+- [Chat ingestion example](apps/chat/examples/chat-ingestion.json)
+- [Chat context request example](apps/chat/examples/chat-context-request.json)
+- [Chat ask request and response example](apps/chat/examples/chat-ask.json)
+
+## Repository layout
+
+```text
+memory/            Core Memory-owned API and integration contract for every app.
+apps/              App-specific contracts. Chat is the first app.
+open-questions.md  Unresolved cross-repository integration questions.
+CHANGELOG.md       Contract change history.
+```
 
 ## Source of truth
 
@@ -34,26 +53,6 @@ Applications own:
 - deciding how to use returned memory context
 
 Applications do not own canonical Memory identity. App-local users, channels, DMs, projects, or folders are bindings or projections over Memory-owned principals and resources.
-
-## Fixed app integration contract
-
-The current app integration contract uses:
-
-- `Authorization: Bearer <mem_app_live_...>` for app service credential authentication
-- `X-Api-Key: <mem_app_live_...>` as the Memory credential transport when deployment infrastructure already uses the `Authorization` header
-- `X-Memory-On-Behalf-Of-Type` and `X-Memory-On-Behalf-Of-Id` for delegated actor context
-- `POST /v1/app-bindings/bootstrap` for idempotent app-local resource binding
-- `read`, `write`, `delete`, `export`, `admin` as the minimum membership permissions
-- `chat_conversation_segment` as the Chat conversation segment `source_type`
-
-## Space naming model
-
-MemorySpace is the canonical collaboration and retrieval boundary. Applications may present a MemorySpace under an app-local name:
-
-- Chat presents a MemorySpace as a channel, DM, or personal-agent DM.
-- Another application may present the same MemorySpace as a project, folder, case, repository, or workspace.
-
-The app-local object is a binding to a MemorySpace, not a new canonical space concept.
 
 ## Operational model
 
