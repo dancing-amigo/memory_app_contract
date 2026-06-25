@@ -5,6 +5,7 @@ This repository is the shared integration contract for the Memory System and app
 The first application contract is Chat:
 
 - [Chat to Memory Boundary](chat-memory-boundary.md)
+- [How to Use Memory from an App](usage-guide.md)
 - [Open Questions](open-questions.md)
 - [Bootstrap Example](examples/chat-bootstrap.json)
 - [Ingestion Example](examples/chat-ingestion.json)
@@ -39,6 +40,7 @@ Applications do not own canonical Memory identity. App-local users, channels, DM
 The current app integration contract uses:
 
 - `Authorization: Bearer <mem_app_live_...>` for app service credential authentication
+- `X-Api-Key: <mem_app_live_...>` as the Memory credential transport when deployment infrastructure already uses the `Authorization` header
 - `X-Memory-On-Behalf-Of-Type` and `X-Memory-On-Behalf-Of-Id` for delegated actor context
 - `POST /v1/app-bindings/bootstrap` for idempotent app-local resource binding
 - `read`, `write`, `delete`, `export`, `admin` as the minimum membership permissions

@@ -11,6 +11,7 @@
     "source_id": "src_chat_segments",
     "source_type": "chat_conversation_segment",
     "content": {
+      "type": "text",
       "text": "[2026-06-21T08:55:00Z] Alice: We should assume weekends are usually unavailable for the planning session.\n[2026-06-21T09:00:00Z] Bob: Agreed. Weekday afternoons are better for this team."
     },
     "metadata": {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-06-25
+
+- Added `usage-guide.md` with the practical app integration call sequence: backend configuration, credential transport, delegated actor headers, bootstrap, ingestion, job polling, retrieval, deletion, and a minimal backend helper.
+- Documented `X-Api-Key` as the Memory credential transport when deployment infrastructure already uses the `Authorization` header.
+- Fixed the Chat ingestion example to include `content.type: "text"`.
+
 ## 2026-06-23
 
 - Resolved stale open questions for MemoryView `ask` and owner-containment `ask` now that Memory marks those initial runtime endpoints as implemented.
