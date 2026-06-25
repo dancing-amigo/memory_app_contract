@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-26
+
+- Clarified that first-class app registration / installation tables are optional lifecycle extensions for the initial production boundary. Active app service credentials, active app bindings, active delegated principals, and Memory-owned resource memberships are sufficient for fail-closed app-bound authorization until app-wide or tenant-level lifecycle operations are required.
+
 ## 2026-06-25
 
 - Documented the current GCP production Memory API endpoint and clarified that Chat should use Cloud Run identity-token `Authorization` plus the Memory app credential in `X-Api-Key` for that deployment.

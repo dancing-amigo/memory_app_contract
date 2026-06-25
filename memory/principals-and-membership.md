@@ -142,6 +142,15 @@ Memory must provide or define:
 - owner-containment retrieval that also filters app-bound member-scoped spaces by resource read membership
 - audit or mutation logs for principal, membership, app binding, and policy changes
 
+Memory does not need a separate first-class app registration or installation table for the initial production boundary if the runtime can fail closed using:
+
+- active app service credential status and scope
+- active app binding for app-bound resource operations
+- active delegated principal
+- Memory-owned resource membership for the requested action
+
+First-class app registration and installation records are optional lifecycle extensions. Add them when Memory needs app-wide disable/suspend, tenant or workspace uninstall, central capability management, or installation audit independent of credentials and bindings. They must not replace delegated principal membership or app binding authorization.
+
 ## Required application behavior
 
 Applications must:
@@ -155,12 +164,11 @@ Applications must:
 - propagate every membership change to Memory through durable sync
 - fail closed for Memory reads and writes when the delegated principal or resource binding is unresolved
 
-## Current production gaps
+## Remaining validation and optional lifecycle
 
-The current contract still has production gaps that Memory and apps must close before relying on cross-application identity and membership at production scale:
+The current Memory boundary covers canonical principal resolution, delegated app-bound authorization, explicit membership revoke/full reconcile, and owner-containment resource membership filtering. Remaining work is:
 
-- canonical principal create/resolve API shape is not fixed in this repository
-- membership removal semantics are not fixed as revoke, full reconcile, or full-snapshot bootstrap
-- owner-containment no-leak behavior for app-bound private spaces needs broader integration tests
+- broader owner-containment no-leak integration tests for app-bound private spaces
+- first-class app registration / installation lifecycle only if product operations require app-wide or tenant-level lifecycle control beyond active credentials and active bindings
 
 These are not reasons to move identity or membership authority into applications. They are Memory-side contract and runtime gaps that must be closed while preserving Memory as the canonical authority.

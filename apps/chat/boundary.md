@@ -87,11 +87,14 @@ X-Memory-App-Binding-Id: bind_chat_channel_001
 Memory authorization must check:
 
 - Chat app credential status and scope
-- Chat app registration / installation / binding
+- Chat app authorization boundary
+- app binding
 - delegated principal existence
 - delegated principal membership or permission on the target MemorySpace or MemoryView
 - requested action: read, write, delete, export, or administer
 - requested_use for memory-use policy on reads
+
+For the current production boundary, Memory may represent Chat app registration and installation through an active app service credential plus an active `AppBinding`. A separate first-class app registration or installation table is not required unless Memory needs app-wide disable/suspend, workspace-level uninstall, central capability management, or enterprise installation audit. If those operational requirements appear, Memory should add explicit app registration and app installation records without weakening the resource membership checks described here.
 
 Per-user Memory API keys stored by Chat are not the production integration model. The production app service credential is an API-key-shaped bearer token with `mem_app_live_` prefix. If Memory reuses API key hashing internally, the token is still semantically a Chat app service credential, not a user key.
 

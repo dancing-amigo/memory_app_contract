@@ -109,13 +109,13 @@ If Chat intentionally withholds `export` from channel owners/admins, the product
 
 Member removal must revoke Memory access. Chat must not rely on additive bootstrap to remove a member.
 
-When a member is removed or leaves, Chat must do one of the following, depending on the Memory API that exists:
+When a member is removed or leaves, Chat must do one of the following:
 
 - call an explicit Memory membership revoke/deactivate API
 - call a full membership reconciliation API with an explicitly marked active snapshot
 - call a bootstrap endpoint only if the contract explicitly defines that request as a full active snapshot that deactivates omitted principals
 
-Until Memory exposes one of those semantics, Chat must treat production member removal from memory-bound resources as not fully solved. Retrying bootstrap with a shorter membership list is not enough.
+The current Memory implementation exposes explicit membership revoke and full membership reconciliation. Retrying bootstrap with a shorter membership list is still not enough.
 
 ## Personal-agent DM
 
