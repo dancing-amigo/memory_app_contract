@@ -12,6 +12,12 @@ MEMORY_APP_CREDENTIAL="mem_app_live_example.secret"
 MEMORY_APP_ID="chat"
 ```
 
+Current Memory production endpoint for the GCP deployment is:
+
+```sh
+MEMORY_API_BASE_URL="https://memory-api-uajejfqfxa-an.a.run.app"
+```
+
 Do not expose `MEMORY_APP_CREDENTIAL` to browsers, mobile clients, or client-side JavaScript. App clients should call their own app backend, and the app backend calls Memory.
 
 For the normal Memory API deployment, send the app credential as the HTTP bearer token:
@@ -26,6 +32,8 @@ If Memory is deployed behind infrastructure that already uses the `Authorization
 Authorization: Bearer <cloud_run_identity_token>
 X-Api-Key: mem_app_live_example.secret
 ```
+
+For the current Cloud Run production deployment, Chat should call the production base URL above from its backend, set `Authorization` to a Cloud Run identity token for that audience, and set `X-Api-Key` to the Memory app credential stored in Chat's server-side secret manager.
 
 Memory treats these two Memory credential transports equivalently:
 

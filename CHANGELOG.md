@@ -2,6 +2,7 @@
 
 ## 2026-06-25
 
+- Documented the current GCP production Memory API endpoint and clarified that Chat should use Cloud Run identity-token `Authorization` plus the Memory app credential in `X-Api-Key` for that deployment.
 - Added strict principal and membership contract docs for Memory and Chat, including the rationale for Memory-owned canonical identity, app user readiness states, membership synchronization, removal semantics, owner-containment filtering, and implementation gaps.
 - Clarified that app-bound operations must send `X-Memory-App-Binding-Id` after bootstrap, and updated the Chat bootstrap example to grant `export` explicitly when showing owner/admin-style permissions.
 - Restructured the contract around Memory as the core shared surface: added `memory/README.md`, moved the app integration guide to `memory/app-integration.md`, and made root `README.md` a read-order and layout index.
