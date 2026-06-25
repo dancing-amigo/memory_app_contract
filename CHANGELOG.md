@@ -5,6 +5,10 @@
 - Added `usage-guide.md` with the practical app integration call sequence: backend configuration, credential transport, delegated actor headers, bootstrap, ingestion, job polling, retrieval, deletion, and a minimal backend helper.
 - Documented `X-Api-Key` as the Memory credential transport when deployment infrastructure already uses the `Authorization` header.
 - Fixed the Chat ingestion example to include `content.type: "text"`.
+- Clarified that production Chat users must be provisioned as canonical Memory principals before becoming active memory-capable users.
+- Added membership synchronization requirements for channel/DM creation, explicit member add/remove, user deactivation, open channel auto-join, and role changes.
+- Clarified that bootstrap retries are not sufficient for member removal unless Memory explicitly treats the request as a full membership snapshot and deactivates omitted principals.
+- Clarified that owner-containment retrieval must still filter app-bound channel/DM Spaces by Memory-owned read membership; broad team or organization ownership is not enough.
 
 ## 2026-06-23
 

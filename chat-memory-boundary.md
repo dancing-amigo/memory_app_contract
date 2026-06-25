@@ -49,6 +49,8 @@ Chat's channel record is therefore an app-local binding to a MemorySpace:
 
 Chat must not create users, teams, memberships, or MemorySpaces that exist only in Chat. User and space creation initiated from Chat should call Memory control-plane APIs first, then store or refresh the Chat projection/binding returned by Memory.
 
+For production Chat, a Chat user must not become an active memory-capable user before the corresponding canonical Memory principal has been created or resolved. Chat may keep a pending local login or invite record while Memory is unavailable, but it must not write memory, create memory-bound channels, or issue delegated Memory requests for an unprovisioned local-only user.
+
 ## Authentication and delegated actor contract
 
 Chat must authenticate to Memory as the Chat application, not as each individual Chat user.
@@ -215,6 +217,27 @@ Temporary owner-only development integration may use Memory's existing idempoten
 
 Until Memory has full user, app, team, and membership APIs, Chat must not treat chat-local users or spaces as the canonical cross-app model. A temporary owner-only development path may exist, but production Chat integration requires app service credential, delegated subject, and Memory-side membership authorization.
 
+## Membership synchronization and revocation
+
+Chat channel membership and Memory resource membership are separate records, but they must not diverge in production.
+
+Every Chat membership transition that changes who can read or write a channel or DM must be reflected in Memory:
+
+- channel or DM creation
+- explicit member add
+- explicit member remove or leave
+- user deactivation
+- automatic join to an open channel
+- role changes that affect Memory permissions
+
+Open channel auto-join is still a membership change. Chat must enqueue durable Memory synchronization for it just as it does for explicit member add.
+
+Memory must provide a way to revoke or deactivate a principal's membership on a MemorySpace or MemoryView. Retrying app binding bootstrap with a shorter `memberships` array is not sufficient unless the bootstrap request is explicitly defined as a full membership snapshot and Memory deactivates omitted principals. If bootstrap is additive-only, Chat must call an explicit Memory membership revoke or full-reconcile API on member removal.
+
+When Chat sends a full current membership snapshot, the request must identify it as such through the Memory API contract, idempotency key, or endpoint semantics. Memory must then reconcile active memberships to the supplied active set, update changed permissions, and deactivate principals that are no longer present. Stale active Memory memberships are authorization bugs.
+
+Membership synchronization is structural state. It must run even when channel message memory is off, because Memory still needs the resource boundary to authorize future reads, writes, deletion, export, and cross-space retrieval.
+
 ## Membership permissions
 
 Minimum Memory resource permissions are:
@@ -341,6 +364,10 @@ POST /v1/memory-scopes/owner-containment/ask
 ```
 
 The request body includes `request_origin`, for example `{ "type": "user", "id": "user_001" }` or `{ "type": "team", "id": "team_001" }`. A user origin resolves the user's own MemorySpaces plus containing team / organization MemorySpaces. A team origin resolves team plus containing organization MemorySpaces and does not include member personal MemorySpaces by default.
+
+Owner-containment is a MemoryView-equivalent retrieval boundary, not a substitute for Chat channel membership. App-bound channel, DM, and group DM MemorySpaces with member-scoped visibility must pass Memory-side resource membership checks before their atoms can appear in owner-containment or any other cross-space result. A broad team or organization owner alone is not enough to include every Chat channel Space for every user in that team or organization.
+
+If Chat wants a "everything this user can see" answer, it must use a MemoryView or owner-containment scope whose resolved spaces are filtered by Memory-owned read membership. Chat must not pass arbitrary space lists or rely on Chat-local membership filtering after Memory has already returned cross-space evidence.
 
 `ask` is the primary API for normal user-facing Chat questions that should receive a natural-language answer.
 

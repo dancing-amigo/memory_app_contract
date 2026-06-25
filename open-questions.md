@@ -6,6 +6,12 @@ Memory owns canonical identity and membership. The Memory repository accepted th
 
 The contract assumes Chat will not maintain users, teams, memberships, or MemorySpaces that exist only in Chat. The idempotent bootstrap API shape is fixed in `chat-memory-boundary.md`.
 
+Production readiness now depends on Memory exposing canonical principal create/resolve behavior that Chat can call before activating a memory-capable local user. A local-only Chat user must be treated as pending or degraded, not as a delegated Memory principal.
+
+Membership removal also needs explicit production semantics. Either app binding bootstrap must support a clearly marked full membership snapshot that deactivates omitted principals, or Memory must expose an explicit membership revoke/full-reconcile API. Additive bootstrap alone is not enough for Chat channel membership correctness.
+
+Owner-containment retrieval must not treat a broad team or organization owner as permission to include every app-bound Chat channel or DM Space. Cross-space retrieval for Chat-visible knowledge must be filtered by Memory-owned read membership on each app-bound collaboration Space.
+
 ## Query API status
 
 Resolved for initial runtime: Memory exposes `search`, `context`, and `ask` for single MemorySpace, MemoryView, and owner-containment query scope.
