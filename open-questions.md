@@ -20,7 +20,7 @@ Remaining production work lives in the Memory repository: broader delegated Chat
 
 ## Segment size thresholds
 
-Chat should ingest conversation segments and cut them only on message boundaries. The default idle close window is fixed at 72 hours without a new message in the channel/DM. Exact production size thresholds remain tunable per app, with message-count, character-count, or token-count thresholds allowed for long uninterrupted conversations.
+Chat should ingest conversation segments and cut them only on message boundaries. The default idle close window is fixed at 24 hours without a new message in the channel/DM. Exact production size thresholds remain tunable per app, with message-count, character-count, or token-count thresholds allowed for long uninterrupted conversations.
 
 ## Locked message exceptions
 
