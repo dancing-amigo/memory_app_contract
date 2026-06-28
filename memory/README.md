@@ -13,7 +13,7 @@ Memory owns:
 - Source registration, trust metadata, and source write/use permissions
 - RawEvidence ingestion and lineage
 - Policy and `requested_use` filtering
-- search, context, ask, feedback, job status, and delete propagation contracts
+- search, atom feed, context, ask, feedback, job status, and delete propagation contracts
 
 Applications own:
 
@@ -59,14 +59,17 @@ POST /v1/memory-spaces/{space_id}/ingestions
 GET  /v1/jobs/{job_id}
 
 POST /v1/memory-spaces/{space_id}/search
+POST /v1/memory-spaces/{space_id}/atoms/feed
 POST /v1/memory-spaces/{space_id}/context
 POST /v1/memory-spaces/{space_id}/ask
 
 POST /v1/memory-views/{view_id}/search
+POST /v1/memory-views/{view_id}/atoms/feed
 POST /v1/memory-views/{view_id}/context
 POST /v1/memory-views/{view_id}/ask
 
 POST /v1/memory-scopes/owner-containment/search
+POST /v1/memory-scopes/owner-containment/atoms/feed
 POST /v1/memory-scopes/owner-containment/context
 POST /v1/memory-scopes/owner-containment/ask
 
@@ -74,7 +77,7 @@ POST /v1/memory-spaces/{space_id}/feedback
 POST /v1/memory-spaces/{space_id}/delete-propagations
 ```
 
-Use `search` for raw memory records, `context` for ContextPacks and provenance, and `ask` for normal user-facing grounded natural-language answers.
+Use `search` for ranked matching memory records, `atoms/feed` for active atom snapshot sync ordered by creation time, `context` for ContextPacks and provenance, and `ask` for normal user-facing grounded natural-language answers.
 
 Every read must include `requested_use`. Memory must not return memory that is unauthorized for the delegated principal or blocked by policy for the requested use.
 

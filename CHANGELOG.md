@@ -2,6 +2,7 @@
 
 ## 2026-06-28
 
+- Added Memory atom feed read endpoints for single MemorySpace, MemoryView, and owner-containment scopes. The feed returns active, policy-allowed MemoryAtoms in creation order and is explicitly not a mutation feed.
 - Changed the default Chat conversation segment idle close window from 72 hours to 24 hours.
 - Added Chat ingestion metadata for bounded thread context (`chat_context_message_ids`, `context_message_count`, `context_char_count`) and documented `conversation_segment_transcript_with_thread_context`.
 
