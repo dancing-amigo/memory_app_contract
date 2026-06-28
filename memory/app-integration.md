@@ -194,7 +194,7 @@ Atom feed request bodies omit `query`:
 }
 ```
 
-Owner-containment atom feed additionally includes `request_origin`. Cursor values are opaque to apps; pass the returned `next_cursor` back unchanged while `has_more` is true.
+Owner-containment atom feed additionally includes `request_origin`. Cursor values are opaque and scope-bound to the Memory resource and resolved MemorySpace set; pass the returned `next_cursor` back unchanged to the same endpoint/scope while `has_more` is true.
 
 Memory must not return memory that is unauthorized for the delegated principal or blocked by policy for the requested use.
 
