@@ -151,19 +151,34 @@ Chat should include these metadata fields when available:
 - `chat_channel_id`: app-local channel or DM identifier
 - `chat_thread_id`: app-local thread identifier
 - `chat_message_ids`: source message identifiers included in the input
+- `chat_context_message_ids`: source message identifiers included only as transcript context, not as accepted segment messages
 - `conversation_segment_id`: app-local segment id when ingesting a batch
 - `segment_start_message_id`: first included message id when ingesting a batch
 - `segment_end_message_id`: last included message id when ingesting a batch
 - `segment_message_count`: number of messages included in the segment
 - `segment_char_count`: source character count represented by the segment
+- `context_message_count`: number of context-only messages included before the segment transcript
+- `context_char_count`: source character count represented by context-only transcript text
+- `context_truncated`: whether Chat omitted additional available thread context because of an app-local context budget
+- `context_depth_limit`: maximum ancestor depth Chat considered for context-only thread text
+- `context_char_limit`: maximum context-only transcript character budget Chat applied
 - `segment_closed_reason`: for example `idle_timeout`, `size_threshold`, `manual`, or `backfill`
 - `speaker_roles`: roles represented in the input, for example `user` or `assistant`
 - `event_time`: source-side event time in ISO 8601 format
-- `transform`: how the text was produced, for example `conversation_segment_transcript`, `conversation_segment_summary`, `single_message`, or `curated_memory_input`
+- `transform`: how the text was produced, for example `conversation_segment_transcript`, `conversation_segment_transcript_with_thread_context`, `conversation_segment_summary`, `single_message`, or `curated_memory_input`
 - `source_uri`: optional app-local deep link or stable reference
 - `content_checksum`: optional checksum of the original source text or batch
 
 If Chat sends a curated or summarized input instead of the full original transcript, metadata must make that explicit through `transform`.
+
+When a segment contains thread replies whose parents or ancestors were already accepted by Memory, Chat may prepend bounded thread context to `content.text` instead of re-ingesting those parent messages as segment messages. In that case:
+
+- `chat_message_ids`, `segment_start_message_id`, `segment_end_message_id`, and `segment_message_count` describe only the new messages accepted by this segment
+- `chat_context_message_ids`, `context_message_count`, and `context_char_count` describe context-only messages included to make replies understandable
+- accepted context-only messages must not be locked or acknowledged again because of their inclusion as context
+- context-only messages must respect Chat's effective memory policy; messages with message memory disabled must not be included as context text
+- Chat should bound context by app-local depth and character budgets so reply context does not bypass segment size controls
+- `transform` should be `conversation_segment_transcript_with_thread_context` when context-only thread text is included
 
 After Memory accepts a segment ingestion, Chat may lock the included messages from edit/delete in the app-local UI and API. This avoids requiring Memory to support message-level update/redaction as the default Chat integration path. Messages not yet included in an accepted segment remain app-local; the default Chat policy allows normal edit/delete until Memory accepts the containing segment. Any product-specific pre-acceptance edit window is independent of Memory correctness.
 

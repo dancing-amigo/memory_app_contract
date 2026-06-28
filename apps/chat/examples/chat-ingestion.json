@@ -12,7 +12,7 @@
     "source_type": "chat_conversation_segment",
     "content": {
       "type": "text",
-      "text": "[2026-06-21T08:55:00Z] Alice: We should assume weekends are usually unavailable for the planning session.\n[2026-06-21T09:00:00Z] Bob: Agreed. Weekday afternoons are better for this team."
+      "text": "[Thread context]\n[2026-06-21T08:55:00Z] Alice: We should assume weekends are usually unavailable for the planning session.\n[Segment messages]\n[2026-06-21T09:00:00Z] Bob: Agreed. Weekday afternoons are better for this team."
     },
     "metadata": {
       "app_id": "chat",
@@ -20,16 +20,22 @@
       "app_space_binding_type": "channel",
       "chat_channel_id": "ch_project_planning",
       "chat_thread_id": "thread_123",
-      "chat_message_ids": ["msg_001", "msg_002"],
+      "chat_message_ids": ["msg_002"],
+      "chat_context_message_ids": ["msg_001"],
       "conversation_segment_id": "chatseg_20260621_001",
-      "segment_start_message_id": "msg_001",
+      "segment_start_message_id": "msg_002",
       "segment_end_message_id": "msg_002",
-      "segment_message_count": 2,
-      "segment_char_count": 186,
+      "segment_message_count": 1,
+      "segment_char_count": 76,
+      "context_message_count": 1,
+      "context_char_count": 110,
+      "context_truncated": false,
+      "context_depth_limit": 3,
+      "context_char_limit": 2000,
       "segment_closed_reason": "idle_timeout",
       "speaker_roles": ["user"],
       "event_time": "2026-06-21T09:00:00Z",
-      "transform": "conversation_segment_transcript",
+      "transform": "conversation_segment_transcript_with_thread_context",
       "source_uri": "chat://threads/thread_123/messages/msg_002",
       "content_checksum": "sha256:example"
     },

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-06-28
+
+- Added Chat ingestion metadata for bounded thread context (`chat_context_message_ids`, `context_message_count`, `context_char_count`) and documented `conversation_segment_transcript_with_thread_context`.
+
 ## 2026-06-26
 
 - Clarified that first-class app registration / installation tables are optional lifecycle extensions for the initial production boundary. Active app service credentials, active app bindings, active delegated principals, and Memory-owned resource memberships are sufficient for fail-closed app-bound authorization until app-wide or tenant-level lifecycle operations are required.
