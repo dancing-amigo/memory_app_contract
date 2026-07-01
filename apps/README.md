@@ -16,3 +16,4 @@ App contracts must not redefine Memory internals. If an app needs a new Memory A
 Current app contracts:
 
 - [Chat](chat/README.md)
+- [Google Workspace](google-workspace/README.md)

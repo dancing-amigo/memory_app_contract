@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-01
+
+- Added the Google Workspace app contract for Gmail and Google Drive connectors, including bootstrap and ingestion examples.
+- Documented that new non-Chat connectors should pass a generic `source` definition to app binding bootstrap, while existing Chat `source_template` payloads remain valid.
+- Clarified that Google OAuth tokens, sync cursors, Google API calls, and file export stay in the connector service, not Memory.
+
 ## 2026-06-28
 
 - Added Memory atom feed read endpoints for single MemorySpace, MemoryView, and owner-containment scopes. The feed returns active, policy-allowed MemoryAtoms in creation order and is explicitly not a mutation feed.

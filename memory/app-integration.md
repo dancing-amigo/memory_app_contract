@@ -72,6 +72,28 @@ Idempotency-Key: chat:channel:ch_project_planning
 
 For the current Chat example, use the payload shape shown in `../apps/chat/examples/chat-bootstrap.json`.
 
+App-specific connectors may pass a full `source` definition instead of a Chat `source_template`. This is the standard path for new non-Chat connectors such as Google Workspace:
+
+```json
+{
+  "source": {
+    "id": "src_google_gmail_messages",
+    "source_type": "google_gmail_message",
+    "display_name": "Gmail messages",
+    "trust_zone": 2,
+    "source_authority": "mixed_email_correspondence",
+    "allowed_memory_writes": ["observation", "decision", "open_loop", "preference_evidence"],
+    "disallowed_memory_writes": ["user_profile", "user_preference", "policy", "procedure"],
+    "default_allowed_uses": ["search", "answer_generation", "reflection"],
+    "default_disallowed_uses": ["training", "external_share", "auto_action", "profile_update"],
+    "default_sensitivity": "normal",
+    "retention_policy": "default"
+  }
+}
+```
+
+The bootstrap body must include exactly one of `source_template` or `source`. Existing Chat `source_template` payloads remain valid. Generic `source` definitions must use `allowed_use` and `memory_write` labels registered by the target MemoryPack.
+
 The app backend should persist the resolved response fields it needs for later calls:
 
 - app binding id

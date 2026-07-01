@@ -23,6 +23,15 @@ The first app contract is Chat:
 - [Chat context request example](apps/chat/examples/chat-context-request.json)
 - [Chat ask request and response example](apps/chat/examples/chat-ask.json)
 
+Google Workspace connector contract:
+
+- [Google Workspace app contract](apps/google-workspace/README.md)
+- [Google Workspace boundary](apps/google-workspace/boundary.md)
+- [Gmail bootstrap example](apps/google-workspace/examples/gmail-bootstrap.json)
+- [Gmail ingestion example](apps/google-workspace/examples/gmail-ingestion.json)
+- [Drive folder bootstrap example](apps/google-workspace/examples/drive-folder-bootstrap.json)
+- [Drive file ingestion example](apps/google-workspace/examples/drive-file-ingestion.json)
+
 ## Repository layout
 
 ```text
@@ -45,10 +54,11 @@ Memory owns:
 - Policy and requested_use filtering
 - search, context, ask, feedback, and delete propagation contracts
 
-Applications own:
+Applications and connector services own:
 
 - app-local UI and interaction flow
 - app-local message, session, and thread models
+- connector-local OAuth, sync cursors, API calls, file export, and deterministic extraction
 - batching and formatting before ingestion
 - deciding when to write to Memory
 - deciding how to use returned memory context
