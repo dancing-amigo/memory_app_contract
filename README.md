@@ -23,7 +23,7 @@ Memory が持つもの:
 - Source 登録と trust / write / use default
 - RawEvidence ingestion
 - Policy / `requested_use` filtering
-- search、atoms/feed、context、ask、feedback、delete propagation の API 契約
+- context、ask の API 契約
 
 アプリが持つもの:
 
