@@ -19,7 +19,7 @@ AGENTS.md    この契約 repo を編集する agent 向け運用ルール。
 
 Memory が持つもの:
 
-- canonical principal、membership、MemorySpace、MemoryView
+- canonical principal、membership、MemorySpace
 - Source 登録と trust / write / use default
 - RawEvidence ingestion
 - Policy / `requested_use` filtering
