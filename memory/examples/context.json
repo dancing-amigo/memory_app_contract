@@ -18,15 +18,20 @@
       "type": "memory_space",
       "id": "space_project_001"
     },
+    "memory_space_ids": ["space_project_001"],
     "query": "プロジェクト計画の打ち合わせを調整する前に必要な文脈は？",
     "requested_use": "project_context",
-    "context_text": "関連する記憶コンテキスト:\n- プロジェクト計画の打ち合わせは週末を避ける。\n- 平日の午後が望ましい。",
     "evidence": {
       "memory_atoms": [
         {
           "memory_id": "mem_001",
+          "memory_space_id": "space_project_001",
+          "role": "direct",
           "type": "preference_evidence",
           "body": "プロジェクト計画の打ち合わせは週末を避け、平日の午後を優先する。",
+          "event_time_start": null,
+          "event_time_end": null,
+          "event_time_granularity": null,
           "source_refs": [
             {
               "raw_evidence_id": "raw_001",
@@ -38,12 +43,19 @@
       "raw_evidence": [
         {
           "raw_evidence_id": "raw_001",
+          "memory_space_id": "space_project_001",
           "source_id": "src_app_segments",
           "mode": "span_excerpt",
           "text": "プロジェクト計画の打ち合わせは週末を避ける。平日の午後が望ましい。",
-          "covered_memory_ids": ["mem_001"]
+          "covered_memory_ids": ["mem_001"],
+          "included_char_count": 39,
+          "approximate_tokens": 24
         }
       ]
+    },
+    "budget": {
+      "target_tokens": 10000,
+      "estimated_tokens": 420
     },
     "warnings": [],
     "trace_id": "trace_001"

@@ -153,18 +153,20 @@ UI card、inspection、manual selection、app-specific logic のために ranked
 
 ### context
 
-アプリ側の answerer、tool、action、evidence view、debug flow に渡すための reusable Memory context を返します。
+アプリ側の answerer、tool、action、evidence view、debug flow に渡すための reusable structured evidence を返します。
 
 例: [context.json](examples/context.json)
 
-response は常に両方を含みます。
+response は bounded evidence を返します。
 
-- `context_text`: prompt input に使う compact な Memory-produced string。
-- `evidence`: `context_text` を作るために使った bounded structured evidence。可能な場合は MemoryAtom と RawEvidence record / excerpt を含みます。
+- `evidence`: policy / authorization を通過し、query に対して final selected order に並べられた bounded structured evidence。MemoryAtom と RawEvidence record / excerpt を含みます。
+- `budget`: Memory が見積もった evidence payload token budget。`estimated_tokens` は `target_tokens` 以下でなければなりません。
 
-request-time の response format selector はありません。Memory は evidence limit を所有し、常に返る response が app で使えるサイズになるよう調整します。
+request-time の response format selector はありません。Memory は evidence limit と順序を所有し、常に返る response が app で使えるサイズになるよう調整します。
 
-`context_text` は lossy で prompt-ready な surface です。structured evidence、source refs、audit fields の代替として parse してはいけません。
+`context_text` は返しません。structured evidence を prompt、tool、action、UI 用の text に組み立てる責任はアプリ側にあります。アプリは Memory の内部 DB や internal ContextPack を直接読んではいけません。
+
+`evidence.memory_atoms[].role` は `direct` / `related` など、アプリが evidence の扱いを判断するための最低限の順序・役割情報です。debug ranking、omitted reason、policy trace は external response には含めません。
 
 ### ask
 
