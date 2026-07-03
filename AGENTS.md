@@ -33,6 +33,6 @@ This repository does not replace the Memory repository's ADRs or product documen
 
 - Do not redefine Memory internals here.
 - Do not add app-specific behavior that requires Memory to branch structurally by app name.
-- Put unresolved integration questions in `open-questions.md`.
+- Keep unresolved integration questions in the relevant `memory/README.md` or `apps/<app_id>/README.md` only when they affect the current contract; otherwise track them outside this repo.
 - Keep examples aligned with the current Memory API.
 - If a contract change requires Memory API, data model, policy, evaluation, or membership changes, update the Memory repository docs or ADRs in the same work.

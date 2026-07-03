@@ -16,7 +16,7 @@
     },
     "metadata": {
       "app_id": "chat",
-      "memory_space_id": "space_project_planning",
+      "memory_space_id": "space_chat_channel_ch_project_planning",
       "app_space_binding_type": "channel",
       "chat_channel_id": "ch_project_planning",
       "chat_thread_id": "thread_123",

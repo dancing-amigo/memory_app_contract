@@ -1,57 +1,58 @@
-# Memory Core Contract
+# Memory API Contract
 
-This directory records the Memory-owned parts of the app integration contract. Every app integration must treat these concepts, APIs, and authorization boundaries as the shared contract before reading its app-specific notes under `../apps/`.
+This is the app-facing Memory API contract. It should be enough for an application backend to know which requests to send, which headers are required, and what response shapes to expect.
 
-## Contract authority
+## Auth And Delegation
 
-Memory owns:
+Applications call Memory from their backend with an app service credential:
 
-- canonical user, app, team, organization, system, and membership semantics
-- app service credential and delegated actor authorization semantics
-- MemorySpace creation and lifecycle
-- MemoryView and owner-containment search boundaries
-- Source registration, trust metadata, and source write/use permissions
-- RawEvidence ingestion and lineage
-- Policy and `requested_use` filtering
-- search, atom feed, context, ask, feedback, job status, and delete propagation contracts
+```http
+Authorization: Bearer mem_app_live_example.secret
+```
 
-Applications own:
+If infrastructure already uses `Authorization`, send the Memory credential with `X-Api-Key`:
 
-- app UI and interaction flow
-- app-local sessions, messages, threads, files, projects, folders, or channels
-- batching and formatting before ingestion
-- deciding when to write memory-worthy input
-- deciding how returned Memory results are presented or combined with app-local context
+```http
+Authorization: Bearer <infrastructure_token>
+X-Api-Key: mem_app_live_example.secret
+```
 
-App-local resources are bindings or projections over Memory-owned principals and resources. They are not new canonical Memory identity, membership, or space concepts.
+Every user/team/app-bound read or write must include the delegated Memory principal:
 
-## Fixed integration surface
+```http
+X-Memory-On-Behalf-Of-Type: user
+X-Memory-On-Behalf-Of-Id: user_001
+X-Memory-App-Binding-Id: bind_example_project_001
+```
 
-Production app integrations use:
+`X-Memory-App-Binding-Id` is absent during first bootstrap and should be present after a binding exists.
 
-- `Authorization: Bearer <mem_app_live_...>` for app service credential authentication
-- `X-Api-Key: <mem_app_live_...>` as the Memory credential transport when infrastructure already uses `Authorization`
-- `X-Memory-On-Behalf-Of-Type` and `X-Memory-On-Behalf-Of-Id` for delegated actor context
-- `X-Memory-App-Binding-Id` after an app binding exists
-- `POST /v1/app-bindings/bootstrap` for idempotent app-local resource binding
-- `read`, `write`, `delete`, `export`, `admin` as the minimum Memory resource permissions
+App credentials authorize API families. They do not replace MemorySpace or MemoryView membership checks for the delegated principal.
 
-AppCredential scopes authorize API families. They do not replace MemorySpace or MemoryView membership checks for the delegated principal.
+## Core Objects
 
-## Space and view model
+- `MemorySpace`: canonical storage and collaboration boundary.
+- `MemoryView`: explicit cross-space retrieval boundary.
+- `Source`: registered input provenance and write/use defaults.
+- `RawEvidence`: original ingested input.
+- `MemoryAtom`: derived memory evidence.
+- `context`: Memory-produced compact context string plus bounded structured evidence.
 
-MemorySpace is the canonical collaboration and retrieval boundary. Applications may present a MemorySpace under an app-local name:
+Applications may expose MemorySpaces as channels, folders, projects, DMs, cases, or other local resources. Those local resources are bindings, not canonical Memory spaces.
 
-- Chat presents a MemorySpace as a channel, DM, or personal-agent DM.
-- Another app may present a MemorySpace as a project, folder, case, repository, workspace, or other local object.
+## Permissions
 
-The app-local object is a binding to a MemorySpace. It must not become a second canonical space model.
+Minimum resource permissions:
 
-MemoryView is the explicit cross-space retrieval boundary. Owner-containment scope is a MemoryView-equivalent runtime boundary derived from Memory-owned principal containment. Apps must not pass arbitrary space lists or rely on app-local filtering after Memory has already returned cross-space evidence.
+- `read`: search, atom feed, context, ask, job status, non-export reads
+- `write`: ingestion and feedback
+- `delete`: delete propagation and redaction
+- `export`: export APIs
+- `admin`: Source, membership, binding, policy, MemorySpace, and MemoryView configuration
 
-## Core API families
+`admin` does not imply content read/write/delete/export.
 
-App integrations use these Memory API families:
+## API Families
 
 ```text
 POST /v1/app-bindings/bootstrap
@@ -77,16 +78,88 @@ POST /v1/memory-spaces/{space_id}/feedback
 POST /v1/memory-spaces/{space_id}/delete-propagations
 ```
 
-Use `search` for ranked matching memory records, `atoms/feed` for active atom snapshot sync ordered by creation time, `context` for Memory-produced context text plus evidence/provenance, and `ask` for normal user-facing grounded natural-language answers. A `context` response always includes both `context_text` and bounded structured `evidence`; apps do not request compact-only or full-pack variants.
+## Bootstrap
 
-Every read must include `requested_use`. Memory must not return memory that is unauthorized for the delegated principal or blocked by policy for the requested use.
+Use bootstrap to bind an app-local resource to a canonical MemorySpace and Source.
 
-## Principal and membership model
+Example: [bootstrap.json](examples/bootstrap.json)
 
-Memory owns canonical principal and membership state so memories can be reused safely across applications. Read [Principals and Membership Contract](principals-and-membership.md) before implementing app user provisioning, app binding bootstrap, membership sync, or cross-space retrieval.
+The request is idempotent by app credential plus `Idempotency-Key`. A repeated request with equivalent content returns the same resources. A repeated request with incompatible content should fail with an idempotency conflict.
 
-## App-specific extensions
+Bootstrap can create or resolve:
 
-An app may define app-local Source types and metadata conventions, such as Chat's `chat_conversation_segment`. These identify provenance and traceability. They must not cause Memory to branch structurally by app name.
+- app binding
+- MemorySpace
+- Source
+- initial memberships
 
-New app contracts belong under `apps/<app_id>/`. Keep app-specific batching, UI, message lifecycle, and local storage behavior there.
+## Ingestion
+
+Use ingestion to send memory-worthy text as RawEvidence.
+
+Example: [ingestion.json](examples/ingestion.json)
+
+Applications should batch app-local events into coherent text segments before ingestion. Do not send only an LLM summary as canonical input when deterministic source text is available.
+
+Async ingestion returns a `job_id`. Poll `GET /v1/jobs/{job_id}` until `succeeded`, `failed`, or `dead_letter`.
+
+## Reads
+
+Every read includes `requested_use`. Memory must not return memory that the delegated principal cannot access or that policy blocks for the requested use.
+
+### search
+
+Returns ranked MemoryAtom hits for UI cards, inspection, manual selection, or app-specific logic.
+
+Example: [search.json](examples/search.json)
+
+### atoms/feed
+
+Returns active, currently policy-allowed MemoryAtoms ordered by creation time for snapshot sync. This is not a mutation feed and must not be used to infer deletes, policy changes, or historical event order.
+
+Example: [atoms-feed.json](examples/atoms-feed.json)
+
+### context
+
+Returns reusable Memory context for an app's own answerer, tool, action, evidence view, or debugging flow.
+
+Example: [context.json](examples/context.json)
+
+The response always includes both:
+
+- `context_text`: compact Memory-produced string for prompt input.
+- `evidence`: bounded structured evidence used to build `context_text`, including MemoryAtom and RawEvidence records or excerpts when available.
+
+There is no request-time response format selector. Memory owns the evidence limits and tunes them to keep the always-returned response small enough for app use.
+
+`context_text` is lossy and prompt-ready. Apps must not parse it as a replacement for structured evidence, source refs, or audit fields.
+
+### ask
+
+Returns a direct grounded natural-language answer generated by Memory.
+
+Example: [ask.json](examples/ask.json)
+
+Use `ask` when the app wants Memory to answer the user-facing question. Use `context` when the app wants Memory context to feed its own prompt, tool, or action flow.
+
+## Cross-Space Reads
+
+Cross-space reads must use a MemoryView or owner-containment scope. Applications must not pass arbitrary space lists or filter unauthorized evidence after Memory has returned it.
+
+Owner-containment resolves from `request_origin`:
+
+```json
+{ "type": "user", "id": "user_001" }
+```
+
+A user origin can include that user's MemorySpaces plus containing team/organization Spaces. A team origin can include team and containing organization Spaces, but not member personal Spaces by default.
+
+## Delete And Redaction
+
+Applications must not delete only their local binding and assume Memory data is deleted. Use:
+
+```http
+POST /v1/memory-spaces/{space_id}/delete-propagations
+```
+
+The app should keep source ids, raw evidence ids, local source identifiers, and checksums needed to request deletion or redaction.

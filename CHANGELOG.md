@@ -2,6 +2,7 @@
 
 ## 2026-07-03
 
+- Simplified the contract repository to root `README.md`, `memory/README.md`, generic `memory/examples/*.json`, `apps/chat/README.md`, and the Chat ingestion example. Removed moved stubs, open questions, duplicate membership/boundary docs, Chat generic read examples, and the unused Google Workspace contract.
 - Replaced the provisional pack-based context wording with a `context` response contract that always returns both `context_text` and structured `evidence`. The app contract no longer exposes pack ids; API responses use `context_id`.
 
 ## 2026-07-01

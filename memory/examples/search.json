@@ -1,0 +1,47 @@
+{
+  "method": "POST",
+  "path": "/v1/memory-spaces/{space_id}/search",
+  "headers": {
+    "Authorization": "Bearer mem_app_live_example.secret",
+    "X-Memory-On-Behalf-Of-Type": "user",
+    "X-Memory-On-Behalf-Of-Id": "user_001",
+    "X-Memory-App-Binding-Id": "bind_example_project_001"
+  },
+  "body": {
+    "query": "project planning meeting availability",
+    "requested_use": "project_context",
+    "limit": 8
+  },
+  "response": {
+    "memory_resource": {
+      "type": "memory_space",
+      "id": "space_project_001"
+    },
+    "memory_space_ids": ["space_project_001"],
+    "hits": [
+      {
+        "atom": {
+          "id": "mem_001",
+          "memory_space_id": "space_project_001",
+          "type": "preference_evidence",
+          "body": "For Project Planning, weekend meetings should be avoided and weekday afternoons are preferred.",
+          "source_refs": [
+            {
+              "raw_evidence_id": "raw_001",
+              "source_id": "src_app_segments"
+            }
+          ],
+          "status": "active"
+        },
+        "score": 0.92,
+        "routes": ["keyword", "vector"],
+        "policy_decision": {
+          "decision": "allowed",
+          "requested_use": "project_context",
+          "reason_codes": ["allowed_use_match"]
+        }
+      }
+    ],
+    "trace_id": "trace_001"
+  }
+}

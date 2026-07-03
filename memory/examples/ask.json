@@ -5,10 +5,10 @@
     "Authorization": "Bearer mem_app_live_example.secret",
     "X-Memory-On-Behalf-Of-Type": "user",
     "X-Memory-On-Behalf-Of-Id": "user_001",
-    "X-Memory-App-Binding-Id": "bind_chat_channel_ch_project_planning"
+    "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "query": "When should we schedule the Project Planning meeting?",
     "requested_use": "answer_generation",
     "limit": 8
   },
@@ -16,20 +16,20 @@
     "answer_id": "ans_001",
     "memory_resource": {
       "type": "memory_space",
-      "id": "space_chat_channel_ch_project_planning"
+      "id": "space_project_001"
     },
-    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "query": "When should we schedule the Project Planning meeting?",
     "requested_use": "answer_generation",
     "answer": {
       "status": "answered",
-      "text": "The team generally treats weekends as unavailable for planning sessions, and weekday afternoons are preferred.",
+      "text": "Use a weekday afternoon and avoid weekends.",
       "language": "en"
     },
     "missing_evidence": false,
     "cannot_answer_reason": null,
     "confidence": "high",
     "context_id": "ctx_001",
-    "used_evidence_ids": ["mem_001", "mem_002"],
+    "used_evidence_ids": ["mem_001"],
     "citations": [
       {
         "evidence_type": "memory_atom",
@@ -37,7 +37,7 @@
         "source_refs": [
           {
             "raw_evidence_id": "raw_001",
-            "source_id": "src_chat_segments"
+            "source_id": "src_app_segments"
           }
         ]
       }

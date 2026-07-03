@@ -1,0 +1,40 @@
+{
+  "method": "POST",
+  "path": "/v1/memory-spaces/{space_id}/ingestions",
+  "headers": {
+    "Authorization": "Bearer mem_app_live_example.secret",
+    "X-Memory-On-Behalf-Of-Type": "user",
+    "X-Memory-On-Behalf-Of-Id": "user_001",
+    "X-Memory-App-Binding-Id": "bind_example_project_001"
+  },
+  "body": {
+    "source_id": "src_app_segments",
+    "source_type": "app_text_segment",
+    "content": {
+      "type": "text",
+      "text": "[2026-07-03T09:00:00Z] User: For Project Planning, avoid weekend meetings. Weekday afternoons are preferred."
+    },
+    "metadata": {
+      "app_id": "example_app",
+      "memory_space_id": "space_project_001",
+      "app_resource_type": "project",
+      "app_resource_id": "project_001",
+      "segment_id": "segment_001",
+      "event_time": "2026-07-03T09:00:00Z",
+      "transform": "source_text_segment",
+      "source_uri": "example://projects/project_001/segments/segment_001",
+      "content_checksum": "sha256:example"
+    },
+    "allowed_uses": ["search", "answer_generation", "reflection", "project_context"],
+    "disallowed_uses": [],
+    "processing": {
+      "mode": "async",
+      "pipeline": "default"
+    }
+  },
+  "response": {
+    "raw_evidence_id": "raw_001",
+    "job_id": "job_001",
+    "status": "queued"
+  }
+}

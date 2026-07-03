@@ -5,10 +5,10 @@
     "Authorization": "Bearer mem_app_live_example.secret",
     "X-Memory-On-Behalf-Of-Type": "user",
     "X-Memory-On-Behalf-Of-Id": "user_001",
-    "X-Memory-App-Binding-Id": "bind_chat_channel_ch_project_planning"
+    "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "query": "What context is relevant before scheduling Project Planning?",
     "requested_use": "project_context",
     "limit": 8
   },
@@ -16,21 +16,21 @@
     "context_id": "ctx_001",
     "memory_resource": {
       "type": "memory_space",
-      "id": "space_chat_channel_ch_project_planning"
+      "id": "space_project_001"
     },
-    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "query": "What context is relevant before scheduling Project Planning?",
     "requested_use": "project_context",
-    "context_text": "Relevant memory context:\n- The team usually treats weekends as unavailable for planning sessions.\n- Weekday afternoons are preferred for this team.",
+    "context_text": "Relevant memory context:\n- For Project Planning, avoid weekend meetings.\n- Weekday afternoons are preferred.",
     "evidence": {
       "memory_atoms": [
         {
           "memory_id": "mem_001",
           "type": "preference_evidence",
-          "body": "The team usually treats weekends as unavailable for planning sessions.",
+          "body": "For Project Planning, weekend meetings should be avoided and weekday afternoons are preferred.",
           "source_refs": [
             {
               "raw_evidence_id": "raw_001",
-              "source_id": "src_chat_segments"
+              "source_id": "src_app_segments"
             }
           ]
         }
@@ -38,10 +38,10 @@
       "raw_evidence": [
         {
           "raw_evidence_id": "raw_001",
-          "source_id": "src_chat_segments",
+          "source_id": "src_app_segments",
           "mode": "span_excerpt",
-          "text": "We usually avoid weekends for planning. Weekday afternoons work better for this team.",
-          "covered_memory_ids": ["mem_001", "mem_002"]
+          "text": "For Project Planning, avoid weekend meetings. Weekday afternoons are preferred.",
+          "covered_memory_ids": ["mem_001"]
         }
       ]
     },
