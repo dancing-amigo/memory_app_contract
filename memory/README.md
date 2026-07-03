@@ -176,6 +176,8 @@ Memory が直接 grounded natural-language answer を生成して返します。
 
 アプリが「Memory にこの質問へ答えてほしい」場合は `ask` を使います。アプリ自身の prompt、tool、action flow に Memory context を渡したい場合は `context` を使います。
 
+`ask` response は assembled context や context id を返しません。Memory は内部では bounded ContextPack を作って回答生成に使いますが、アプリが evidence や context を必要とする場合は `context` を明示的に呼びます。
+
 ## Cross-Space Read
 
 cross-space read は MemoryView または owner-containment scope 経由で行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。

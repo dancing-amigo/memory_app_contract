@@ -7,7 +7,8 @@
 - `apps/` を `apps/README.md` のみへ整理した。Memory が知るべきアプリ情報は、アプリ一覧、入力 Source、API が呼ばれる場面、利用パターンだけに限定する。
 - Chat 固有の ingestion request example を削除した。ingestion API の request / response example は `memory/examples/ingestion.json` を正本とする。
 - 契約 repo を root `README.md`、`memory/README.md`、汎用 `memory/examples/*.json`、`apps/README.md` に整理した。
-- `context` response は常に `context_text` と structured `evidence` の両方を返す契約にした。外部契約では pack id を露出せず、API response は `context_id` を使う。
+- `context` response は structured `evidence` と budget を返す evidence-only 契約にした。`context_text` は返さず、外部契約では pack id を露出せず、API response は `context_id` を使う。
+- `ask` response から context id を外し、assembled context を返さない契約にした。アプリが evidence / context を必要とする場合は `context` API を使う。
 
 ## 2026-06-28
 

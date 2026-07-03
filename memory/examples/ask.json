@@ -28,7 +28,6 @@
     "missing_evidence": false,
     "cannot_answer_reason": null,
     "confidence": "high",
-    "context_id": "ctx_001",
     "used_evidence_ids": ["mem_001"],
     "citations": [
       {
