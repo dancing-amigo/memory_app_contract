@@ -51,14 +51,23 @@
         "type": "project",
         "id": "project_001"
       },
+      "memory_principal": {
+        "type": "team",
+        "id": "team_001"
+      },
       "memory_resource": {
         "type": "memory_space",
         "id": "space_project_001"
       },
+      "source_id": "src_app_segments",
       "status": "active"
     },
     "memory_space": {
       "id": "space_project_001",
+      "owner": {
+        "type": "team",
+        "id": "team_001"
+      },
       "status": "active"
     },
     "source": {
