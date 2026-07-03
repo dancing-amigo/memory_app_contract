@@ -140,9 +140,9 @@ async ingestion は `job_id` を返します。`GET /v1/jobs/{job_id}` を `succ
 
 Memory は delegated principal が access できない記憶を返してはいけません。
 
-read API は request body に `include_owner_containment` を含められます。
+`context` と `ask` は request body に `include_owner_containment` を必ず含めます。
 
-- 省略時または `false`: path の `space_id` だけを読み取り候補にします。
+- `false`: path の `space_id` だけを読み取り候補にします。
 - `true`: path の `space_id` の owner principal から principal containment をたどり、その owner principal と containing principal が owner の MemorySpace を読み取り候補にします。
 
 `include_owner_containment` は `context`、`ask` だけで使います。`ingestion` は常に path の `space_id` に対する operation です。
@@ -178,18 +178,17 @@ Memory が直接 grounded natural-language answer を生成して返します。
 - `answer.status`: `answered` または `cannot_answer`。
 - `answer.text`: user-facing text。`cannot_answer` の場合も、ユーザーに出せる短い説明を返します。
 - `answer.cannot_answer_reason`: `answer.status` が `cannot_answer` の時だけ返します。例: `insufficient_evidence`、`policy_blocked`、`unsupported_question`。
+- `confidence`: `high`、`medium`、`low`。Memory が answer の根拠充足度を app 側の UI、fallback、review flow で扱えるように返します。
 - `citations`: answered response で使った evidence への最小参照。full evidence、ranking trace、omitted reason は返しません。アプリが evidence 本文や構造を必要とする場合は `context` を呼びます。
 - `trace_id`: Memory 側の request trace。サポート、incident 調査、cross-service log correlation に使います。
 
-`query` は app が request として持っているため echo しません。`memory_resource` は path の `space_id` と request の `include_owner_containment` から決まるため返しません。`missing_evidence` は `answer.status` / `answer.cannot_answer_reason` と重複するため返しません。`warnings`、`confidence`、`used_evidence_ids` は `ask` response には含めません。必要な provenance は `citations` に集約します。
+`query` は app が request として持っているため echo しません。`memory_resource` は path の `space_id` と request の `include_owner_containment` から決まるため返しません。`missing_evidence` は `answer.status` / `answer.cannot_answer_reason` と重複するため返しません。`warnings`、`used_evidence_ids` は `ask` response には含めません。必要な provenance は `citations` に集約します。
 
 `ask` response は assembled context や context id を返しません。Memory は内部では bounded ContextPack を作って回答生成に使いますが、アプリが evidence や context を必要とする場合は `context` を明示的に呼びます。
 
 ## Cross-Space Read
 
 cross-space read は `/v1/memory-spaces/{space_id}/{read_api}` に `include_owner_containment: true` を指定して行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
-
-例: [owner-containment-context.json](examples/owner-containment-context.json)
 
 ```json
 {

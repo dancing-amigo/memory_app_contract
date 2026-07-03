@@ -8,7 +8,8 @@
     "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "プロジェクト計画の打ち合わせはいつ設定すべき？"
+    "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
+    "include_owner_containment": false
   },
   "response": {
     "answer_id": "ans_001",
@@ -17,6 +18,7 @@
       "text": "週末は避け、平日の午後に設定するのがよさそうです。",
       "language": "ja"
     },
+    "confidence": "high",
     "citations": [
       {
         "memory_id": "mem_001",
