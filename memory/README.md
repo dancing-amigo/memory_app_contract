@@ -27,7 +27,7 @@ X-Memory-App-Binding-Id: bind_example_project_001
 
 `X-Memory-App-Binding-Id` は初回 bootstrap 時にはまだ存在しないので不要です。binding 作成後の app-bound request では送ります。
 
-App credential の scope は API family を呼べるかを決めるだけです。対象 MemorySpace の read / write、owner-containment で解決された MemorySpace の read は delegated principal の membership で判定します。
+App credential の scope は API family を呼べるかを決めるだけです。対象 MemorySpace の read / write、`read_scope` で解決された MemorySpace の read は delegated principal の membership で判定します。
 
 ## 基本 object
 
@@ -68,11 +68,6 @@ POST /v1/memory-spaces/{space_id}/search
 POST /v1/memory-spaces/{space_id}/atoms/feed
 POST /v1/memory-spaces/{space_id}/context
 POST /v1/memory-spaces/{space_id}/ask
-
-POST /v1/memory-scopes/owner-containment/search
-POST /v1/memory-scopes/owner-containment/atoms/feed
-POST /v1/memory-scopes/owner-containment/context
-POST /v1/memory-scopes/owner-containment/ask
 
 POST /v1/memory-spaces/{space_id}/feedback
 POST /v1/memory-spaces/{space_id}/delete-propagations
@@ -133,6 +128,13 @@ async ingestion は `job_id` を返します。`GET /v1/jobs/{job_id}` を `succ
 
 すべての read は `requested_use` を含みます。Memory は delegated principal が access できない記憶、または policy が requested use に許可しない記憶を返してはいけません。
 
+read API は request body に `read_scope` を含められます。
+
+- 省略時または `memory_space`: path の `space_id` だけを読み取り候補にします。
+- `owner_containment`: path の `space_id` と、その MemorySpace を包含する MemorySpace を読み取り候補にします。
+
+`read_scope` は `search`、`atoms/feed`、`context`、`ask` だけで使います。`ingestion`、`feedback`、`delete-propagations` は常に path の `space_id` に対する operation です。
+
 ### search
 
 UI card、inspection、manual selection、app-specific logic のために ranked MemoryAtom hits を返します。
@@ -174,15 +176,19 @@ Memory が直接 grounded natural-language answer を生成して返します。
 
 ## Cross-Space Read
 
-cross-space read は owner-containment scope 経由で行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
+cross-space read は `/v1/memory-spaces/{space_id}/{read_api}` に `read_scope: "owner_containment"` を指定して行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
 
-Owner-containment は `request_origin` から解決します。
+例: [owner-containment-context.json](examples/owner-containment-context.json)
 
 ```json
-{ "type": "user", "id": "user_001" }
+{
+  "read_scope": "owner_containment"
+}
 ```
 
-user origin は user 自身の MemorySpace と、それを包含する team / organization Space を含められます。team origin は team と containing organization Space を含められますが、member personal Space は default では含みません。
+owner-containment は path の `space_id` から解決します。user personal Space の場合は user 自身の MemorySpace と、それを包含する team / organization Space を含められます。team Space の場合は team と containing organization Space を含められますが、member personal Space は default では含みません。
+
+MemorySpace containment relation は Memory が所有します。アプリは sibling Space、child Space、任意の related Space を request body で追加してはいけません。
 
 ## Delete / Redaction
 
