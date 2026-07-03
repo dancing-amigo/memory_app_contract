@@ -5,13 +5,19 @@
 ## 読む順番
 
 1. [Memory API 契約](memory/README.md)
-2. [アプリ一覧と利用パターン](apps/README.md)
+2. [アプリ概念の Memory 対応](apps/README.md)
+
+## 当面の確定状態
+
+この契約は当面の Memory / Chat 連携の source of truth です。
+
+Memory repo や Chat repo は、この repo の契約を先に更新せずに Memory API、principal / membership model、MemorySpace owner semantics、ingestion / context / ask の request / response shape を変更してはいけません。
 
 ## 構成
 
 ```text
 memory/       アプリが Memory API を使うための契約と汎用 example。
-apps/         Memory が知っておくとよいアプリ一覧、入力ソース、利用パターン。
+apps/         app-local concept と Memory principal / MemorySpace / Source の対応。
 AGENTS.md    この契約 repo を編集する agent 向け運用ルール。
 ```
 
