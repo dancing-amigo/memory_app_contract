@@ -11,5 +11,18 @@
     "query": "What should the assistant remember before helping the user schedule a project planning session?",
     "requested_use": "project_context",
     "limit": 8
+  },
+  "response": {
+    "context_pack_id": "ctx_001",
+    "memory_resource": {
+      "type": "memory_space",
+      "id": "space_chat_channel_ch_project_planning"
+    },
+    "query": "What should the assistant remember before helping the user schedule a project planning session?",
+    "requested_use": "project_context",
+    "context_format": "compact_text",
+    "context_text": "Relevant memory context:\n- The team usually treats weekends as unavailable for planning sessions.\n- Weekday afternoons are preferred for this team.",
+    "warnings": [],
+    "trace_id": "trace_001"
   }
 }

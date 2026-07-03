@@ -395,7 +395,29 @@ If Chat wants a "everything this user can see" answer, it must use a MemoryView 
 
 `search` returns matching memory objects, primarily `MemoryAtom` hits with score, route, policy decision, and trace metadata. Chat should use `search` when it needs raw memory records for UI cards, inspection, manual selection, or custom application logic.
 
-`context` returns a `ContextPack`: direct evidence, related memories, summaries, claims, counter-evidence, source refs, provenance, warnings, and retrieval trace. Chat should use `context` when it wants to run its own answerer, perform tool/action grounding, show an evidence/debug view, or inspect why `ask` answered the way it did.
+`context` returns a ContextPack response object. The response may include structured evidence collections such as direct evidence, related memories, summaries, claims, counter-evidence, source refs, provenance, warnings, and retrieval trace. It may also include `context_text`, a Memory-produced compact string intended for prompt input.
+
+Memory must build `context_text` only from evidence that passed resource authorization and `requested_use` policy filtering. `context_text` is lossy and prompt-ready; it is not a canonical Memory record format and apps must not parse it as a replacement for MemoryAtom, RawEvidence, source refs, or audit fields.
+
+When `context_text` is present, Chat should prefer it as prompt input for its own answerer to reduce token usage. Chat may still use structured fields for evidence/debug views, tool grounding, or inspection of why `ask` answered the way it did. A context response should include at least one usable context surface: `context_text`, `context_pack`, `items`, `direct_evidence`, or another documented structured evidence collection. When `context_format` is present, `compact_text` means `context_text` is the primary prompt surface.
+
+Compact `context` response example:
+
+```json
+{
+  "context_pack_id": "ctx_001",
+  "memory_resource": {
+    "type": "memory_space",
+    "id": "space_chat_channel_ch_project_planning"
+  },
+  "query": "What should the assistant remember before helping schedule the project planning session?",
+  "requested_use": "answer_generation",
+  "context_format": "compact_text",
+  "context_text": "Relevant memory context:\n- The team usually treats weekends as unavailable for planning sessions.\n- Weekday afternoons are preferred for this team.",
+  "warnings": [],
+  "trace_id": "trace_001"
+}
+```
 
 `ask` assembles or reuses a ContextPack, generates a grounded answer inside Memory, and returns the answer plus audit fields. Memory must not answer from evidence that was filtered out by resource authorization or memory-use policy.
 

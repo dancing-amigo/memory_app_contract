@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-07-03
+
+- Added the compact `context_text` surface to Memory `context` responses so apps can use prompt-ready Memory-compressed context while preserving ContextPack ids, resource metadata, warnings, and trace fields.
+
 ## 2026-07-01
 
 - Added the Google Workspace app contract for Gmail and Google Drive connectors, including bootstrap and ingestion examples.

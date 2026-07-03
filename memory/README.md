@@ -77,7 +77,7 @@ POST /v1/memory-spaces/{space_id}/feedback
 POST /v1/memory-spaces/{space_id}/delete-propagations
 ```
 
-Use `search` for ranked matching memory records, `atoms/feed` for active atom snapshot sync ordered by creation time, `context` for ContextPacks and provenance, and `ask` for normal user-facing grounded natural-language answers.
+Use `search` for ranked matching memory records, `atoms/feed` for active atom snapshot sync ordered by creation time, `context` for ContextPack responses and provenance, and `ask` for normal user-facing grounded natural-language answers. A `context` response may include `context_text`, a Memory-produced compact string for prompt input, instead of or alongside structured evidence collections.
 
 Every read must include `requested_use`. Memory must not return memory that is unauthorized for the delegated principal or blocked by policy for the requested use.
 
