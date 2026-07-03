@@ -9,7 +9,6 @@
   },
   "body": {
     "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
-    "requested_use": "answer_generation",
     "limit": 8
   },
   "response": {
@@ -19,7 +18,6 @@
       "id": "space_project_001"
     },
     "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
-    "requested_use": "answer_generation",
     "answer": {
       "status": "answered",
       "text": "週末は避け、平日の午後に設定するのがよさそうです。",

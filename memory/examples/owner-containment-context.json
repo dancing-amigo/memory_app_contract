@@ -9,7 +9,6 @@
   },
   "body": {
     "query": "このユーザーの打ち合わせ設定で考慮すべきことは？",
-    "requested_use": "answer_generation",
     "read_scope": "owner_containment",
     "limit": 8
   },
@@ -21,7 +20,6 @@
     },
     "memory_space_ids": ["space_user_001", "space_team_001", "space_org_001"],
     "query": "このユーザーの打ち合わせ設定で考慮すべきことは？",
-    "requested_use": "answer_generation",
     "read_scope": "owner_containment",
     "evidence": {
       "memory_atoms": [

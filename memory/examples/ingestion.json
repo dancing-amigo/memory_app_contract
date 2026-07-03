@@ -25,8 +25,6 @@
       "source_uri": "example://projects/project_001/segments/segment_001",
       "content_checksum": "sha256:example"
     },
-    "allowed_uses": ["answer_generation", "reflection", "project_context"],
-    "disallowed_uses": [],
     "processing": {
       "mode": "async",
       "pipeline": "default"

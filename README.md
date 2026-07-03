@@ -20,9 +20,9 @@ AGENTS.md    この契約 repo を編集する agent 向け運用ルール。
 Memory が持つもの:
 
 - canonical principal、membership、MemorySpace
-- Source 登録と trust / write / use default
+- Source 登録と provenance / trust / write default
 - RawEvidence ingestion
-- Policy / `requested_use` filtering
+- Policy / authorization filtering
 - context、ask の API 契約
 
 アプリが持つもの:

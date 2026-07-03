@@ -37,8 +37,6 @@
       "source_authority": "user_utterance",
       "allowed_memory_writes": ["observation", "decision", "open_loop", "preference_evidence"],
       "disallowed_memory_writes": ["user_profile", "user_preference", "policy", "procedure"],
-      "default_allowed_uses": ["answer_generation", "reflection", "project_context"],
-      "default_disallowed_uses": ["training", "external_share", "auto_action"],
       "default_sensitivity": "normal",
       "retention_policy": "default"
     }
