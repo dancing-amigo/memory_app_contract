@@ -81,6 +81,8 @@ Bootstrap は次を作成または解決します。
 - Source
 - app binding。app resource と owner principal / MemorySpace / Source の対応です。
 
+bootstrap example は最小 shape だけを示します。storage、model、retention、write policy などの詳細設定は Memory repo の API / ADR 側で管理します。
+
 Bootstrap は principal membership の追加、削除、同期、reconcile には使いません。
 
 app binding を削除しても、owner principal、MemorySpace、Source、Memory data は削除されません。アプリローカル resource との対応だけを無効化します。
