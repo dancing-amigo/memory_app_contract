@@ -1,108 +1,5 @@
 {
-  "create_or_reactivate_space_membership": {
-    "method": "POST",
-    "path": "/v1/memory-spaces/space_project_001/memberships",
-    "headers": {
-      "Authorization": "Bearer mem_app_live_example.secret",
-      "X-Memory-On-Behalf-Of-Type": "user",
-      "X-Memory-On-Behalf-Of-Id": "user_001",
-      "X-Memory-App-Binding-Id": "bind_example_project_001",
-      "Idempotency-Key": "example:space_project_001:membership:user_002"
-    },
-    "body": {
-      "principal": {
-        "type": "user",
-        "id": "user_002"
-      },
-      "permissions": ["read", "write"]
-    },
-    "response": {
-      "id": "mship_user_002_space_project_001",
-      "principal": {
-        "type": "user",
-        "id": "user_002"
-      },
-      "resource_type": "memory_space",
-      "resource_id": "space_project_001",
-      "permissions": ["read", "write"],
-      "status": "active"
-    }
-  },
-  "reconcile_space_memberships": {
-    "method": "PUT",
-    "path": "/v1/memory-spaces/space_project_001/memberships",
-    "headers": {
-      "Authorization": "Bearer mem_app_live_example.secret",
-      "X-Memory-On-Behalf-Of-Type": "user",
-      "X-Memory-On-Behalf-Of-Id": "user_001",
-      "X-Memory-App-Binding-Id": "bind_example_project_001",
-      "Idempotency-Key": "example:space_project_001:membership:reconcile:2026-07-03T00:00:00Z"
-    },
-    "body": {
-      "memberships": [
-        {
-          "principal": {
-            "type": "user",
-            "id": "user_001"
-          },
-          "permissions": ["read", "write", "delete", "export", "admin"]
-        },
-        {
-          "principal": {
-            "type": "user",
-            "id": "user_002"
-          },
-          "permissions": ["read", "write"]
-        }
-      ]
-    },
-    "response": {
-      "memberships": [
-        {
-          "principal": {
-            "type": "user",
-            "id": "user_001"
-          },
-          "resource_type": "memory_space",
-          "resource_id": "space_project_001",
-          "permissions": ["read", "write", "delete", "export", "admin"],
-          "status": "active"
-        },
-        {
-          "principal": {
-            "type": "user",
-            "id": "user_002"
-          },
-          "resource_type": "memory_space",
-          "resource_id": "space_project_001",
-          "permissions": ["read", "write"],
-          "status": "active"
-        }
-      ],
-      "deactivated_memberships": []
-    }
-  },
-  "revoke_space_membership": {
-    "method": "DELETE",
-    "path": "/v1/memory-spaces/space_project_001/memberships/user/user_002",
-    "headers": {
-      "Authorization": "Bearer mem_app_live_example.secret",
-      "X-Memory-On-Behalf-Of-Type": "user",
-      "X-Memory-On-Behalf-Of-Id": "user_001",
-      "X-Memory-App-Binding-Id": "bind_example_project_001"
-    },
-    "response": {
-      "principal": {
-        "type": "user",
-        "id": "user_002"
-      },
-      "resource_type": "memory_space",
-      "resource_id": "space_project_001",
-      "permissions": ["read", "write"],
-      "status": "deleted"
-    }
-  },
-  "create_principal_containment": {
+  "create_or_reactivate_principal_membership": {
     "method": "POST",
     "path": "/v1/principal-memberships",
     "headers": {
@@ -131,6 +28,57 @@
         "id": "team_001"
       },
       "status": "active"
+    }
+  },
+  "create_team_organization_membership": {
+    "method": "POST",
+    "path": "/v1/principal-memberships",
+    "headers": {
+      "Authorization": "Bearer mem_app_live_example.secret",
+      "X-Memory-On-Behalf-Of-Type": "organization",
+      "X-Memory-On-Behalf-Of-Id": "org_001",
+      "Idempotency-Key": "example:principal:team_001:org_001"
+    },
+    "body": {
+      "member": {
+        "type": "team",
+        "id": "team_001"
+      },
+      "group": {
+        "type": "organization",
+        "id": "org_001"
+      }
+    },
+    "response": {
+      "member": {
+        "type": "team",
+        "id": "team_001"
+      },
+      "group": {
+        "type": "organization",
+        "id": "org_001"
+      },
+      "status": "active"
+    }
+  },
+  "delete_principal_membership": {
+    "method": "DELETE",
+    "path": "/v1/principal-memberships/user/user_002/team/team_001",
+    "headers": {
+      "Authorization": "Bearer mem_app_live_example.secret",
+      "X-Memory-On-Behalf-Of-Type": "team",
+      "X-Memory-On-Behalf-Of-Id": "team_001"
+    },
+    "response": {
+      "member": {
+        "type": "user",
+        "id": "user_002"
+      },
+      "group": {
+        "type": "team",
+        "id": "team_001"
+      },
+      "status": "deleted"
     }
   }
 }

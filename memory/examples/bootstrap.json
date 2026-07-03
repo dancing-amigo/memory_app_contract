@@ -29,15 +29,6 @@
       "policy_profile_id": "team_private_memory_v1",
       "model_profile_id": "default_ja_memory_v1"
     },
-    "initial_memberships": [
-      {
-        "principal": {
-          "type": "user",
-          "id": "user_001"
-        },
-        "permissions": ["read", "write", "delete", "export", "admin"]
-      }
-    ],
     "source": {
       "id": "src_app_segments",
       "source_type": "app_text_segment",
@@ -74,16 +65,6 @@
       "id": "src_app_segments",
       "source_type": "app_text_segment",
       "status": "active"
-    },
-    "initial_memberships": [
-      {
-        "principal": {
-          "type": "user",
-          "id": "user_001"
-        },
-        "permissions": ["read", "write", "delete", "export", "admin"],
-        "status": "active"
-      }
-    ]
+    }
   }
 }
