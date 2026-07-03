@@ -120,6 +120,18 @@ memory-worthy な text を RawEvidence として投入します。
 
 例: [ingestion.json](examples/ingestion.json)
 
+request body shape は最小限にします。
+
+- `source_id`: 登録済み Source。`source_type` は Source 側の属性なので ingestion body では送らない。
+- `content`: Memory に入れる canonical source text。
+- `app_ref`: app-local な source unit への参照。`type`、`id`、`occurred_at`、`uri` など、lineage、audit、debug、将来の delete / redaction propagation で使える stable identifier だけを入れる。
+
+`app_id`、`memory_space_id`、`app_resource_type`、`app_resource_id` は app credential、path の `space_id`、`X-Memory-App-Binding-Id` から解決できるため、ingestion body には入れません。
+
+`processing` は request body には含めません。ingestion は現契約では async で、pipeline 選択は Source / MemorySpace 設定と Memory 側の default によって決まります。
+
+ingestion request は `Idempotency-Key` を必ず送ります。値は app-local segment id など、同じ source unit の retry で安定する key にします。
+
 アプリはローカル event をそのまま細かく送るのではなく、アプリ側で coherent な text segment にまとめてから送ります。deterministic な source text がある場合、LLM summary だけを canonical input として送ってはいけません。
 
 async ingestion は `job_id` を返します。`GET /v1/jobs/{job_id}` を `succeeded`、`failed`、`dead_letter` まで poll します。
