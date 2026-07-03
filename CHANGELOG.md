@@ -2,7 +2,7 @@
 
 ## 2026-07-03
 
-- Added the compact `context_text` surface to Memory `context` responses so apps can use prompt-ready Memory-compressed context while preserving ContextPack ids, resource metadata, warnings, and trace fields.
+- Replaced the provisional pack-based context wording with a `context` response contract that always returns both `context_text` and structured `evidence`. The app contract no longer exposes pack ids; API responses use `context_id`.
 
 ## 2026-07-01
 

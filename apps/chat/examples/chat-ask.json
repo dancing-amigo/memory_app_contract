@@ -10,8 +10,7 @@
   "body": {
     "query": "What should the assistant remember before helping the user schedule a project planning session?",
     "requested_use": "answer_generation",
-    "limit": 8,
-    "include_context": false
+    "limit": 8
   },
   "response": {
     "answer_id": "ans_001",
@@ -29,7 +28,7 @@
     "missing_evidence": false,
     "cannot_answer_reason": null,
     "confidence": "high",
-    "context_pack_id": "ctx_001",
+    "context_id": "ctx_001",
     "used_evidence_ids": ["mem_001", "mem_002"],
     "citations": [
       {
