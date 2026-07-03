@@ -9,8 +9,7 @@
   },
   "body": {
     "query": "このユーザーの打ち合わせ設定で考慮すべきことは？",
-    "read_scope": "owner_containment",
-    "limit": 8
+    "include_owner_containment": true
   },
   "response": {
     "context_id": "ctx_002",
@@ -20,7 +19,7 @@
     },
     "memory_space_ids": ["space_user_001", "space_team_001", "space_org_001"],
     "query": "このユーザーの打ち合わせ設定で考慮すべきことは？",
-    "read_scope": "owner_containment",
+    "include_owner_containment": true,
     "evidence": {
       "memory_atoms": [
         {

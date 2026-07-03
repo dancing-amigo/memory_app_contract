@@ -27,7 +27,7 @@ X-Memory-App-Binding-Id: bind_example_project_001
 
 `X-Memory-App-Binding-Id` は初回 bootstrap 時にはまだ存在しないので不要です。binding 作成後の app-bound request では送ります。
 
-App credential の scope は API family を呼べるかを決めるだけです。対象 MemorySpace の read / write、`read_scope` で解決された MemorySpace の read は MemorySpace の owner principal と delegated principal の principal membership で判定します。
+App credential の scope は API family を呼べるかを決めるだけです。対象 MemorySpace の read / write、owner-containment で解決された MemorySpace の read は MemorySpace の owner principal と delegated principal の principal membership で判定します。
 
 ## 基本 object
 
@@ -114,12 +114,12 @@ async ingestion は `job_id` を返します。`GET /v1/jobs/{job_id}` を `succ
 
 Memory は delegated principal が access できない記憶を返してはいけません。
 
-read API は request body に `read_scope` を含められます。
+read API は request body に `include_owner_containment` を含められます。
 
-- 省略時または `memory_space`: path の `space_id` だけを読み取り候補にします。
-- `owner_containment`: path の `space_id` の owner principal から principal containment をたどり、その owner principal と containing principal が owner の MemorySpace を読み取り候補にします。
+- 省略時または `false`: path の `space_id` だけを読み取り候補にします。
+- `true`: path の `space_id` の owner principal から principal containment をたどり、その owner principal と containing principal が owner の MemorySpace を読み取り候補にします。
 
-`read_scope` は `context`、`ask` だけで使います。`ingestion` は常に path の `space_id` に対する operation です。
+`include_owner_containment` は `context`、`ask` だけで使います。`ingestion` は常に path の `space_id` に対する operation です。
 
 ### context
 
@@ -132,7 +132,7 @@ response は bounded evidence を返します。
 - `evidence`: authorization を通過し、query に対して final selected order に並べられた bounded structured evidence。MemoryAtom と RawEvidence record / excerpt を含みます。
 - `budget`: Memory が見積もった evidence payload token budget。`estimated_tokens` は `target_tokens` 以下でなければなりません。
 
-request-time の response format selector はありません。Memory は evidence limit と順序を所有し、常に返る response が app で使えるサイズになるよう調整します。
+request-time の response format selector や limit はありません。Memory は evidence 量と順序を所有し、常に返る response が app で使えるサイズになるよう調整します。
 
 `context_text` は返しません。structured evidence を prompt、tool、action、UI 用の text に組み立てる責任はアプリ側にあります。アプリは Memory の内部 DB や internal ContextPack を直接読んではいけません。
 
@@ -150,13 +150,13 @@ Memory が直接 grounded natural-language answer を生成して返します。
 
 ## Cross-Space Read
 
-cross-space read は `/v1/memory-spaces/{space_id}/{read_api}` に `read_scope: "owner_containment"` を指定して行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
+cross-space read は `/v1/memory-spaces/{space_id}/{read_api}` に `include_owner_containment: true` を指定して行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
 
 例: [owner-containment-context.json](examples/owner-containment-context.json)
 
 ```json
 {
-  "read_scope": "owner_containment"
+  "include_owner_containment": true
 }
 ```
 
