@@ -61,6 +61,62 @@
       "status": "active"
     }
   },
+  "reconcile_principal_memberships": {
+    "method": "PUT",
+    "path": "/v1/principal-memberships/team/team_001",
+    "headers": {
+      "Authorization": "Bearer mem_app_live_example.secret",
+      "X-Memory-On-Behalf-Of-Type": "team",
+      "X-Memory-On-Behalf-Of-Id": "team_001",
+      "Idempotency-Key": "example:principal-memberships:team_001:2026-07-03T00:00:00Z"
+    },
+    "body": {
+      "members": [
+        {
+          "type": "user",
+          "id": "user_001"
+        },
+        {
+          "type": "user",
+          "id": "user_002"
+        },
+        {
+          "type": "user",
+          "id": "user_003"
+        }
+      ]
+    },
+    "response": {
+      "group": {
+        "type": "team",
+        "id": "team_001"
+      },
+      "memberships": [
+        {
+          "member": {
+            "type": "user",
+            "id": "user_001"
+          },
+          "status": "active"
+        },
+        {
+          "member": {
+            "type": "user",
+            "id": "user_002"
+          },
+          "status": "active"
+        },
+        {
+          "member": {
+            "type": "user",
+            "id": "user_003"
+          },
+          "status": "active"
+        }
+      ],
+      "deactivated_memberships": []
+    }
+  },
   "delete_principal_membership": {
     "method": "DELETE",
     "path": "/v1/principal-memberships/user/user_002/team/team_001",
