@@ -12,7 +12,7 @@
     "source_type": "app_text_segment",
     "content": {
       "type": "text",
-      "text": "[2026-07-03T09:00:00Z] User: For Project Planning, avoid weekend meetings. Weekday afternoons are preferred."
+      "text": "[2026-07-03T09:00:00Z] User: プロジェクト計画の打ち合わせは週末を避ける。平日の午後が望ましい。"
     },
     "metadata": {
       "app_id": "example_app",

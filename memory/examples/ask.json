@@ -8,7 +8,7 @@
     "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "When should we schedule the Project Planning meeting?",
+    "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
     "requested_use": "answer_generation",
     "limit": 8
   },
@@ -18,12 +18,12 @@
       "type": "memory_space",
       "id": "space_project_001"
     },
-    "query": "When should we schedule the Project Planning meeting?",
+    "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
     "requested_use": "answer_generation",
     "answer": {
       "status": "answered",
-      "text": "Use a weekday afternoon and avoid weekends.",
-      "language": "en"
+      "text": "週末は避け、平日の午後に設定するのがよさそうです。",
+      "language": "ja"
     },
     "missing_evidence": false,
     "cannot_answer_reason": null,

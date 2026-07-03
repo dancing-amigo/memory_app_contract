@@ -1,38 +1,38 @@
 # AGENTS.md
 
-This repository is the shared contract between the Memory System repository and application repositories such as Chat.
+このリポジトリは Memory System と、Chat などのアプリ repo の共有契約です。
 
-## Required operating rule
+## 必須運用ルール
 
-Before reading or editing this repository, run:
+この repo を読む・編集する前に実行してください。
 
 ```sh
 git pull --ff-only
 ```
 
-After editing this repository, commit and push the contract changes before you finish the task:
+この repo を編集したら、作業終了前に commit / push してください。
 
 ```sh
 git status --short
 git add <changed-files>
-git commit -m "<concise contract change>"
+git commit -m "<契約変更の要約>"
 git push
 ```
 
-If push is blocked by authentication or remote configuration, report that explicitly and leave the local commit ready to push.
+push が認証や remote 設定で失敗した場合は、その理由を明示し、local commit までは作ってください。
 
-## Contract authority
+## 契約の責務
 
-The Memory repository owns the Memory API, MemorySpace, MemoryView, Source, Policy, membership, and lifecycle semantics.
+Memory repo は Memory API、MemorySpace、MemoryView、Source、Policy、membership、lifecycle semantics を所有します。
 
-Application repositories own their app UI, app-local sessions, app-local message models, batching, formatting, and how returned memory context is used inside the app.
+アプリ repo は UI、app-local session / message model、batching、formatting、Memory context の使い方を所有します。
 
-This repository does not replace the Memory repository's ADRs or product documentation. It records the cross-repository contract that application agents must read before integrating with Memory.
+この repo は Memory repo の ADR や product docs を置き換えません。アプリが Memory と連携する前に読む cross-repository contract を記録します。
 
-## Editing rules
+## 編集ルール
 
-- Do not redefine Memory internals here.
-- Do not add app-specific behavior that requires Memory to branch structurally by app name.
-- Keep unresolved integration questions in the relevant `memory/README.md` or `apps/<app_id>/README.md` only when they affect the current contract; otherwise track them outside this repo.
-- Keep examples aligned with the current Memory API.
-- If a contract change requires Memory API, data model, policy, evaluation, or membership changes, update the Memory repository docs or ADRs in the same work.
+- Memory internals をここで再定義しない。
+- Memory が app name ごとに構造分岐する必要がある app-specific behavior を追加しない。
+- unresolved integration question は、現在の契約に影響する場合だけ `memory/README.md` または `apps/README.md` に短く残す。それ以外はこの repo 外で管理する。
+- example は現在の Memory API と揃える。
+- 契約変更が Memory API、data model、policy、evaluation、membership の変更を必要とする場合は、同じ作業で Memory repo の docs または ADR も更新する。

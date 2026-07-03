@@ -1,30 +1,43 @@
-# Memory App Contract
+# Memory アプリ契約
 
-This repository is the shared integration contract between the Memory System and applications that use it.
+このリポジトリは、Memory System と、それを使うアプリの共有契約です。
 
-## Read Order
+## 読む順番
 
-1. [Memory API contract](memory/README.md)
-2. [Chat app contract](apps/chat/README.md), when working on Chat integration
-3. [Changelog](CHANGELOG.md), when checking compatibility changes
+1. [Memory API 契約](memory/README.md)
+2. [アプリ一覧と利用パターン](apps/README.md)
+3. 互換性変更を確認する場合は [変更履歴](CHANGELOG.md)
 
-## Repository Layout
+## 構成
 
 ```text
-memory/             App-facing Memory API contract and generic examples.
-apps/chat/          Chat-specific mapping onto Memory primitives.
-CHANGELOG.md        Contract change history.
-AGENTS.md           Agent workflow rules for this contract repo.
+memory/       アプリが Memory API を使うための契約と汎用 example。
+apps/         Memory が知っておくとよいアプリ一覧、入力ソース、利用パターン。
+CHANGELOG.md 契約変更履歴。
+AGENTS.md    この契約 repo を編集する agent 向け運用ルール。
 ```
 
-## Source Of Truth
+## 責務
 
-Memory owns canonical principals, memberships, MemorySpaces, MemoryViews, Sources, RawEvidence ingestion, policy filtering, and the read/write API contracts.
+Memory が持つもの:
 
-Applications own their UI, local messages/files/projects/channels, batching before ingestion, and how returned Memory context is used.
+- canonical principal、membership、MemorySpace、MemoryView
+- Source 登録と trust / write / use default
+- RawEvidence ingestion
+- Policy / `requested_use` filtering
+- search、atoms/feed、context、ask、feedback、delete propagation の API 契約
 
-App-local resources are bindings to Memory-owned resources. They must not redefine canonical Memory identity, membership, policy, or space semantics.
+アプリが持つもの:
 
-## Compatibility Rule
+- UI、ローカル session / message / file / project / channel
+- どの入力を Memory に送るか
+- 送る前の batching / formatting
+- Memory から返った context や answer の使い方
 
-Keep the core contract app-independent. App-specific behavior belongs under `apps/<app_id>/`. If an app needs a new Memory API shape, update `memory/README.md` and the generic examples first, then document only the app-specific mapping under the app directory.
+アプリローカルの channel、DM、project、folder などは Memory-owned resource への binding です。canonical な Memory identity、membership、policy、space semantics をアプリ側で再定義してはいけません。
+
+## 互換性ルール
+
+Memory API の shape を変える場合は、まず `memory/README.md` と `memory/examples/*.json` を更新します。
+
+アプリ固有の知識は `apps/README.md` に最小限で記録します。Memory がアプリ名ごとに構造分岐しなければならない契約は作らないでください。

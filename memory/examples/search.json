@@ -8,7 +8,7 @@
     "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "project planning meeting availability",
+    "query": "プロジェクト計画の打ち合わせ可能時間",
     "requested_use": "project_context",
     "limit": 8
   },
@@ -24,7 +24,7 @@
           "id": "mem_001",
           "memory_space_id": "space_project_001",
           "type": "preference_evidence",
-          "body": "For Project Planning, weekend meetings should be avoided and weekday afternoons are preferred.",
+          "body": "プロジェクト計画の打ち合わせは週末を避け、平日の午後を優先する。",
           "source_refs": [
             {
               "raw_evidence_id": "raw_001",

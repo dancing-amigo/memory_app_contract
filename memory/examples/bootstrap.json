@@ -11,7 +11,7 @@
     "app_resource": {
       "type": "project",
       "id": "project_001",
-      "display_name": "Project Planning",
+      "display_name": "プロジェクト計画",
       "source_uri": "example://projects/project_001",
       "metadata": {
         "workspace_id": "workspace_001"
@@ -19,7 +19,7 @@
     },
     "memory_space": {
       "id": "space_project_001",
-      "name": "Project Planning",
+      "name": "プロジェクト計画",
       "owner": {
         "type": "team",
         "id": "team_001"
@@ -41,7 +41,7 @@
     "source": {
       "id": "src_app_segments",
       "source_type": "app_text_segment",
-      "display_name": "App text segments",
+      "display_name": "アプリのテキスト segment",
       "trust_zone": 1,
       "source_authority": "user_utterance",
       "allowed_memory_writes": ["observation", "decision", "open_loop", "preference_evidence"],

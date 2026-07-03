@@ -8,7 +8,7 @@
     "X-Memory-App-Binding-Id": "bind_example_project_001"
   },
   "body": {
-    "query": "What context is relevant before scheduling Project Planning?",
+    "query": "プロジェクト計画の打ち合わせを調整する前に必要な文脈は？",
     "requested_use": "project_context",
     "limit": 8
   },
@@ -18,15 +18,15 @@
       "type": "memory_space",
       "id": "space_project_001"
     },
-    "query": "What context is relevant before scheduling Project Planning?",
+    "query": "プロジェクト計画の打ち合わせを調整する前に必要な文脈は？",
     "requested_use": "project_context",
-    "context_text": "Relevant memory context:\n- For Project Planning, avoid weekend meetings.\n- Weekday afternoons are preferred.",
+    "context_text": "関連する記憶コンテキスト:\n- プロジェクト計画の打ち合わせは週末を避ける。\n- 平日の午後が望ましい。",
     "evidence": {
       "memory_atoms": [
         {
           "memory_id": "mem_001",
           "type": "preference_evidence",
-          "body": "For Project Planning, weekend meetings should be avoided and weekday afternoons are preferred.",
+          "body": "プロジェクト計画の打ち合わせは週末を避け、平日の午後を優先する。",
           "source_refs": [
             {
               "raw_evidence_id": "raw_001",
@@ -40,7 +40,7 @@
           "raw_evidence_id": "raw_001",
           "source_id": "src_app_segments",
           "mode": "span_excerpt",
-          "text": "For Project Planning, avoid weekend meetings. Weekday afternoons are preferred.",
+          "text": "プロジェクト計画の打ち合わせは週末を避ける。平日の午後が望ましい。",
           "covered_memory_ids": ["mem_001"]
         }
       ]

@@ -1,23 +1,23 @@
-# Memory API Contract
+# Memory API 契約
 
-This is the app-facing Memory API contract. It should be enough for an application backend to know which requests to send, which headers are required, and what response shapes to expect.
+この文書は、アプリ backend が Memory API を使うための契約です。どの request を送るか、どの header が必要か、何が返ると期待できるかをここに集約します。
 
-## Auth And Delegation
+## 認証と delegated principal
 
-Applications call Memory from their backend with an app service credential:
+アプリ backend は app service credential で Memory を呼びます。
 
 ```http
 Authorization: Bearer mem_app_live_example.secret
 ```
 
-If infrastructure already uses `Authorization`, send the Memory credential with `X-Api-Key`:
+Cloud Run などで `Authorization` を infrastructure token に使う場合は、Memory credential を `X-Api-Key` に入れます。
 
 ```http
 Authorization: Bearer <infrastructure_token>
 X-Api-Key: mem_app_live_example.secret
 ```
 
-Every user/team/app-bound read or write must include the delegated Memory principal:
+ユーザー、team、app-bound resource の read / write では、必ず Memory の delegated principal を送ります。
 
 ```http
 X-Memory-On-Behalf-Of-Type: user
@@ -25,34 +25,34 @@ X-Memory-On-Behalf-Of-Id: user_001
 X-Memory-App-Binding-Id: bind_example_project_001
 ```
 
-`X-Memory-App-Binding-Id` is absent during first bootstrap and should be present after a binding exists.
+`X-Memory-App-Binding-Id` は初回 bootstrap 時にはまだ存在しないので不要です。binding 作成後の app-bound request では送ります。
 
-App credentials authorize API families. They do not replace MemorySpace or MemoryView membership checks for the delegated principal.
+App credential の scope は API family を呼べるかを決めるだけです。対象 MemorySpace / MemoryView を読めるか、書けるかは delegated principal の membership で判定します。
 
-## Core Objects
+## 基本 object
 
-- `MemorySpace`: canonical storage and collaboration boundary.
-- `MemoryView`: explicit cross-space retrieval boundary.
-- `Source`: registered input provenance and write/use defaults.
-- `RawEvidence`: original ingested input.
-- `MemoryAtom`: derived memory evidence.
-- `context`: Memory-produced compact context string plus bounded structured evidence.
+- `MemorySpace`: 保存と collaboration の canonical boundary。
+- `MemoryView`: cross-space retrieval の明示 boundary。
+- `Source`: 入力元の provenance、trust、write/use default。
+- `RawEvidence`: Memory に入った原本入力。
+- `MemoryAtom`: RawEvidence から派生した evidence。
+- `context`: Memory が作る compact な context string と bounded structured evidence。
 
-Applications may expose MemorySpaces as channels, folders, projects, DMs, cases, or other local resources. Those local resources are bindings, not canonical Memory spaces.
+アプリは MemorySpace を channel、folder、project、DM、case などとして見せてもよいですが、それらは MemorySpace への binding であり、別の canonical space model ではありません。
 
-## Permissions
+## 権限
 
-Minimum resource permissions:
+最小 permission は次です。
 
-- `read`: search, atom feed, context, ask, job status, non-export reads
-- `write`: ingestion and feedback
-- `delete`: delete propagation and redaction
-- `export`: export APIs
-- `admin`: Source, membership, binding, policy, MemorySpace, and MemoryView configuration
+- `read`: search、atoms/feed、context、ask、job status、non-export read
+- `write`: ingestion、feedback
+- `delete`: delete propagation、redaction
+- `export`: export API
+- `admin`: Source、membership、binding、policy、MemorySpace、MemoryView 設定
 
-`admin` does not imply content read/write/delete/export.
+`admin` は content の read / write / delete / export を自動的には含みません。
 
-## API Families
+## API
 
 ```text
 POST /v1/app-bindings/bootstrap
@@ -80,86 +80,86 @@ POST /v1/memory-spaces/{space_id}/delete-propagations
 
 ## Bootstrap
 
-Use bootstrap to bind an app-local resource to a canonical MemorySpace and Source.
+アプリローカル resource を canonical MemorySpace と Source に binding します。
 
-Example: [bootstrap.json](examples/bootstrap.json)
+例: [bootstrap.json](examples/bootstrap.json)
 
-The request is idempotent by app credential plus `Idempotency-Key`. A repeated request with equivalent content returns the same resources. A repeated request with incompatible content should fail with an idempotency conflict.
+request は app credential と `Idempotency-Key` に対して idempotent です。同じ内容の再送は同じ resource を返し、矛盾する内容の再送は idempotency conflict になります。
 
-Bootstrap can create or resolve:
+Bootstrap は次を作成または解決します。
 
 - app binding
 - MemorySpace
 - Source
-- initial memberships
+- initial membership
 
 ## Ingestion
 
-Use ingestion to send memory-worthy text as RawEvidence.
+memory-worthy な text を RawEvidence として投入します。
 
-Example: [ingestion.json](examples/ingestion.json)
+例: [ingestion.json](examples/ingestion.json)
 
-Applications should batch app-local events into coherent text segments before ingestion. Do not send only an LLM summary as canonical input when deterministic source text is available.
+アプリはローカル event をそのまま細かく送るのではなく、アプリ側で coherent な text segment にまとめてから送ります。deterministic な source text がある場合、LLM summary だけを canonical input として送ってはいけません。
 
-Async ingestion returns a `job_id`. Poll `GET /v1/jobs/{job_id}` until `succeeded`, `failed`, or `dead_letter`.
+async ingestion は `job_id` を返します。`GET /v1/jobs/{job_id}` を `succeeded`、`failed`、`dead_letter` まで poll します。
 
-## Reads
+## Read API
 
-Every read includes `requested_use`. Memory must not return memory that the delegated principal cannot access or that policy blocks for the requested use.
+すべての read は `requested_use` を含みます。Memory は delegated principal が access できない記憶、または policy が requested use に許可しない記憶を返してはいけません。
 
 ### search
 
-Returns ranked MemoryAtom hits for UI cards, inspection, manual selection, or app-specific logic.
+UI card、inspection、manual selection、app-specific logic のために ranked MemoryAtom hits を返します。
 
-Example: [search.json](examples/search.json)
+例: [search.json](examples/search.json)
 
 ### atoms/feed
 
-Returns active, currently policy-allowed MemoryAtoms ordered by creation time for snapshot sync. This is not a mutation feed and must not be used to infer deletes, policy changes, or historical event order.
+現在 active で、requested use policy を通過した MemoryAtom を作成順に返します。これは snapshot sync 用であり、mutation feed ではありません。delete、policy 変更、historical event order を推論するために使ってはいけません。
 
-Example: [atoms-feed.json](examples/atoms-feed.json)
+例: [atoms-feed.json](examples/atoms-feed.json)
 
 ### context
 
-Returns reusable Memory context for an app's own answerer, tool, action, evidence view, or debugging flow.
+アプリ側の answerer、tool、action、evidence view、debug flow に渡すための reusable Memory context を返します。
 
-Example: [context.json](examples/context.json)
+例: [context.json](examples/context.json)
 
-The response always includes both:
+response は常に両方を含みます。
 
-- `context_text`: compact Memory-produced string for prompt input.
-- `evidence`: bounded structured evidence used to build `context_text`, including MemoryAtom and RawEvidence records or excerpts when available.
+- `context_text`: prompt input に使う compact な Memory-produced string。
+- `evidence`: `context_text` を作るために使った bounded structured evidence。可能な場合は MemoryAtom と RawEvidence record / excerpt を含みます。
 
-There is no request-time response format selector. Memory owns the evidence limits and tunes them to keep the always-returned response small enough for app use.
+request-time の response format selector はありません。Memory は evidence limit を所有し、常に返る response が app で使えるサイズになるよう調整します。
 
-`context_text` is lossy and prompt-ready. Apps must not parse it as a replacement for structured evidence, source refs, or audit fields.
+`context_text` は lossy で prompt-ready な surface です。structured evidence、source refs、audit fields の代替として parse してはいけません。
 
 ### ask
 
-Returns a direct grounded natural-language answer generated by Memory.
+Memory が直接 grounded natural-language answer を生成して返します。
 
-Example: [ask.json](examples/ask.json)
+例: [ask.json](examples/ask.json)
 
-Use `ask` when the app wants Memory to answer the user-facing question. Use `context` when the app wants Memory context to feed its own prompt, tool, or action flow.
+アプリが「Memory にこの質問へ答えてほしい」場合は `ask` を使います。アプリ自身の prompt、tool、action flow に Memory context を渡したい場合は `context` を使います。
 
-## Cross-Space Reads
+## Cross-Space Read
 
-Cross-space reads must use a MemoryView or owner-containment scope. Applications must not pass arbitrary space lists or filter unauthorized evidence after Memory has returned it.
+cross-space read は MemoryView または owner-containment scope 経由で行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
 
-Owner-containment resolves from `request_origin`:
+Owner-containment は `request_origin` から解決します。
 
 ```json
 { "type": "user", "id": "user_001" }
 ```
 
-A user origin can include that user's MemorySpaces plus containing team/organization Spaces. A team origin can include team and containing organization Spaces, but not member personal Spaces by default.
+user origin は user 自身の MemorySpace と、それを包含する team / organization Space を含められます。team origin は team と containing organization Space を含められますが、member personal Space は default では含みません。
 
-## Delete And Redaction
+## Delete / Redaction
 
-Applications must not delete only their local binding and assume Memory data is deleted. Use:
+アプリローカルの binding だけを削除しても、Memory data は削除されたことになりません。削除や redaction は次を使います。
 
 ```http
 POST /v1/memory-spaces/{space_id}/delete-propagations
 ```
 
-The app should keep source ids, raw evidence ids, local source identifiers, and checksums needed to request deletion or redaction.
+アプリは削除・redaction request に必要な source id、raw evidence id、app-local source id、checksum を保持します。
