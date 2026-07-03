@@ -1,64 +1,79 @@
-# アプリ一覧と利用パターン
+# アプリ概念の Memory 対応
 
-この文書は、Memory が知っておくとよいアプリ側の情報だけを記録します。
+この文書は、アプリ側のどの概念が Memory の principal、MemorySpace、Source、app binding、app_ref に対応するかだけを記録します。
 
-Memory はアプリごとの内部 model を知る必要はありません。Memory にとって重要なのは、どの Source から入力が来るのか、どの場面でどの API が呼ばれるのか、返した context / answer がどう使われるのかです。
+API request / response の正本 example は `memory/examples/*.json` に置きます。アプリ別の利用パターンや UI flow はここでは扱いません。
 
 ## 記録すること
 
 各アプリについて、必要なら次だけを書きます。
 
-- アプリの目的
-- Memory に登録される代表的な Source
-- `bootstrap` が呼ばれる場面
-- `membership` が呼ばれる場面
-- `ingest` が呼ばれる場面
-- `context` が呼ばれる場面
-- `ask` が呼ばれる場面
-- Memory response がアプリ側でどう使われるか
-- Memory がそのアプリ向けに構造分岐してはいけない点
+- app-local concept
+- 対応する Memory principal
+- 対応する MemorySpace owner
+- 対応する Source
+- principal membership の同期元
+- ingestion の `app_ref`
+- Memory が app-specific に解釈してはいけない点
 
-API request / response の正本 example は `memory/examples/*.json` に置きます。アプリ別の API request example は原則置きません。
+## 共通ルール
+
+アプリの channel、DM、folder、project、case などは Memory の canonical object ではありません。アプリ resource は app binding によって owner principal、MemorySpace、Source に紐づきます。
+
+Memory principal は `user`、`team`、`organization` です。
+
+- 1 人の user に対応する app resource は `user` principal を owner にします。
+- 複数 user が共有する app resource は原則 `team` principal を owner にします。
+- workspace、tenant、company など組織全体に対応する app resource は `organization` principal を owner にします。
+
+MemorySpace は必ず 1 つの owner principal に対応します。複数 user の参加者は Space membership ではなく、owner principal への principal membership として同期します。
+
+ingestion では app schema を Memory に再定義しません。Memory に渡すのは Source、canonical text、stable な `app_ref` だけです。
 
 ## Chat
 
-目的:
+Chat の会話単位は、Memory では principal と MemorySpace に分解して扱います。
 
-- ユーザーや team の会話を Memory に蓄積し、後続の会話、tool、action、検索、回答に使う。
+| Chat concept | Memory concept | Notes |
+| --- | --- | --- |
+| user | `principal.type = user` | personal memory の owner。user owner の MemorySpace に membership 登録は不要。 |
+| personal-agent DM / one-user DM | user principal が owner の MemorySpace | その user の個人 memory。 |
+| channel | `principal.type = team` | channel 参加者を team principal の members として同期する。 |
+| group DM / project room | `principal.type = team` | 複数 user が共有するなら channel と同じく team principal として扱う。 |
+| workspace / tenant / company | `principal.type = organization` | org-wide memory の owner。team principal は organization に所属できる。 |
+| conversation segment | RawEvidence | `source_id = src_chat_segments` で ingestion する canonical text。 |
+| message / thread / reaction | direct Memory object ではない | Chat schema は Memory に再定義しない。必要な範囲だけ segment text と `app_ref` に残す。 |
 
 代表的な Source:
 
 - `source_id`: `src_chat_segments`
 - `source_type`: `chat_conversation_segment`
 
-入力:
+Chat の app binding は、Chat resource と Memory の owner principal / MemorySpace / Source の対応です。
 
-- Chat は会話を app 側で segment 化し、Memory の generic ingestion API に text と `app_ref` を送る。
-- Memory は Chat の message model を知る必要はない。
-- Memory にとって必要なのは、Source、RawEvidence text、lineage / delete / audit に使える app-local identifier だけ。
+例:
 
-`bootstrap` が呼ばれる場面:
+- channel `channel_001` -> team principal `team_channel_001` -> MemorySpace `space_channel_001`
+- personal-agent DM for `user_001` -> user principal `user_001` -> MemorySpace `space_user_001`
+- workspace `org_001` -> organization principal `org_001` -> MemorySpace `space_org_001`
 
-- channel、DM、personal-agent DM など、Chat 側 resource を MemorySpace / Source に binding する時。
+principal membership:
 
-`membership` が呼ばれる場面:
+- channel / group DM / project room の参加者一覧を、対応する team principal の members として同期します。
+- workspace 所属は user -> organization、または team -> organization の principal membership として同期します。
+- user owner の personal MemorySpace のために user -> user membership は作りません。
 
-- channel、DM、project などに対応する owner principal の参加者が変わった時。
-- Chat 側 resource の参加者一覧を principal membership に同期する時。
+ingestion の `app_ref`:
 
-`ingest` が呼ばれる場面:
+- `type`: `segment`
+- `id`: Chat 側の stable segment id
+- `occurred_at`: segment の代表時刻
+- `uri`: Chat 側で source を追跡できる URI
 
-- Chat が memory-worthy な conversation segment を確定した時。
-- segment の切り方、未送信 message の扱い、UI 上の lock は Chat 側の責務。
+read scope:
 
-`context` が呼ばれる場面:
-
-- Chat が自前の prompt、tool、action、workflow に Memory context を混ぜたい時。
-- Chat は `context_text` を prompt input として使い、`evidence` を citation、debug、tool grounding、audit に使う。
-
-`ask` が呼ばれる場面:
-
-- Chat が Memory に直接 user-facing answer を生成してほしい時。
+- `include_owner_containment: false`: binding された MemorySpace だけを読む。
+- `include_owner_containment: true`: owner principal containment をたどる。user owner なら所属 team / organization、team owner なら containing organization の MemorySpace が候補になる。
 
 Memory がしないこと:
 
