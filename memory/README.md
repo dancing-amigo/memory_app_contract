@@ -90,7 +90,7 @@ app binding を削除しても、owner principal、MemorySpace、Source、Memory
 
 ## Principal Membership
 
-principal containment を追加、削除します。
+principal containment を追加、同期、削除します。
 
 例: [membership.json](examples/membership.json)
 
@@ -102,7 +102,13 @@ PUT    /v1/principal-memberships/{group_type}/{group_id}
 DELETE /v1/principal-memberships/{member_type}/{member_id}/{group_type}/{group_id}
 ```
 
-`POST` は単一 member principal を group principal に追加または再有効化します。`PUT` は group principal の active member set を request body の `members` に完全同期します。既存の active member が `members` に含まれない場合、その membership は無効化されます。`DELETE` は単一 member principal を group principal から無効化します。
+request body shape は endpoint ごとに固定です。
+
+- `POST` body: `member` と `group`。単一 member principal を group principal に追加または再有効化します。
+- `PUT` body: `members`。path の group principal の active member set を `members` に完全同期します。既存の active member が `members` に含まれない場合、その membership は無効化されます。
+- `DELETE` body: なし。path の単一 member principal を group principal から無効化します。
+
+`POST` は `members` を受け取りません。`PUT` は `member` や `group` を body では受け取らず、group principal は path の `{group_type}/{group_id}` で指定します。
 
 user principal は group principal ではなく、effective member はその user 自身です。user owner の MemorySpace を作るために user -> user の membership を登録する必要はありません。team / organization など複数 principal を含みうる owner principal でだけ、`POST` / `PUT` / `DELETE` を使います。
 
