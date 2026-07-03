@@ -172,6 +172,17 @@ Memory が直接 grounded natural-language answer を生成して返します。
 
 アプリが「Memory にこの質問へ答えてほしい」場合は `ask` を使います。アプリ自身の prompt、tool、action flow に Memory context を渡したい場合は `context` を使います。
 
+`ask` response は user-facing answer と最小 provenance だけを返します。
+
+- `answer_id`: Memory が生成した answer artifact の ID。アプリログ、audit、support で参照できます。
+- `answer.status`: `answered` または `cannot_answer`。
+- `answer.text`: user-facing text。`cannot_answer` の場合も、ユーザーに出せる短い説明を返します。
+- `answer.cannot_answer_reason`: `answer.status` が `cannot_answer` の時だけ返します。例: `insufficient_evidence`、`policy_blocked`、`unsupported_question`。
+- `citations`: answered response で使った evidence への最小参照。full evidence、ranking trace、omitted reason は返しません。アプリが evidence 本文や構造を必要とする場合は `context` を呼びます。
+- `trace_id`: Memory 側の request trace。サポート、incident 調査、cross-service log correlation に使います。
+
+`query` は app が request として持っているため echo しません。`memory_resource` は path の `space_id` と request の `include_owner_containment` から決まるため返しません。`missing_evidence` は `answer.status` / `answer.cannot_answer_reason` と重複するため返しません。`warnings`、`confidence`、`used_evidence_ids` は `ask` response には含めません。必要な provenance は `citations` に集約します。
+
 `ask` response は assembled context や context id を返しません。Memory は内部では bounded ContextPack を作って回答生成に使いますが、アプリが evidence や context を必要とする場合は `context` を明示的に呼びます。
 
 ## Cross-Space Read

@@ -12,24 +12,15 @@
   },
   "response": {
     "answer_id": "ans_001",
-    "memory_resource": {
-      "type": "memory_space",
-      "id": "space_project_001"
-    },
-    "query": "プロジェクト計画の打ち合わせはいつ設定すべき？",
     "answer": {
       "status": "answered",
       "text": "週末は避け、平日の午後に設定するのがよさそうです。",
       "language": "ja"
     },
-    "missing_evidence": false,
-    "cannot_answer_reason": null,
-    "confidence": "high",
-    "used_evidence_ids": ["mem_001"],
     "citations": [
       {
-        "evidence_type": "memory_atom",
-        "evidence_id": "mem_001",
+        "memory_id": "mem_001",
+        "memory_space_id": "space_project_001",
         "source_refs": [
           {
             "raw_evidence_id": "raw_001",
@@ -38,7 +29,6 @@
         ]
       }
     ],
-    "warnings": [],
     "trace_id": "trace_001"
   }
 }
