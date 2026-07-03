@@ -29,7 +29,7 @@
       "policy_profile_id": "team_private_memory_v1",
       "model_profile_id": "default_ja_memory_v1"
     },
-    "memberships": [
+    "initial_memberships": [
       {
         "principal": {
           "type": "user",
@@ -75,7 +75,7 @@
       "source_type": "app_text_segment",
       "status": "active"
     },
-    "memberships": [
+    "initial_memberships": [
       {
         "principal": {
           "type": "user",

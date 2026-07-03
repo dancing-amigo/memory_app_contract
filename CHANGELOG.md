@@ -2,6 +2,7 @@
 
 ## 2026-07-03
 
+- `bootstrap` をアプリ resource と MemorySpace / Source の接続初期化に狭め、通常の MemorySpace membership 調整は独立した membership API と example に分離した。
 - Markdown ドキュメントを日本語化した。
 - `apps/` を `apps/README.md` のみへ整理した。Memory が知るべきアプリ情報は、アプリ一覧、入力 Source、API が呼ばれる場面、利用パターンだけに限定する。
 - Chat 固有の ingestion request example を削除した。ingestion API の request / response example は `memory/examples/ingestion.json` を正本とする。
