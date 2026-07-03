@@ -6,14 +6,12 @@
 
 1. [Memory API 契約](memory/README.md)
 2. [アプリ一覧と利用パターン](apps/README.md)
-3. 互換性変更を確認する場合は [変更履歴](CHANGELOG.md)
 
 ## 構成
 
 ```text
 memory/       アプリが Memory API を使うための契約と汎用 example。
 apps/         Memory が知っておくとよいアプリ一覧、入力ソース、利用パターン。
-CHANGELOG.md 契約変更履歴。
 AGENTS.md    この契約 repo を編集する agent 向け運用ルール。
 ```
 
