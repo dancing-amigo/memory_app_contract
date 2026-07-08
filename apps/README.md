@@ -30,6 +30,35 @@ MemorySpace は必ず 1 つの owner principal に対応します。複数 user 
 
 ingestion では app schema を Memory に再定義しません。Memory に渡すのは Source、canonical text、stable な `app_ref` だけです。
 
+## 外部 SaaS connector
+
+Gmail、Google Calendar、Slack などの外部 SaaS 連携は、Memory 内部の provider connector ではなく、アプリ側または独立した connector service の責務です。
+
+connector service が持つもの:
+
+- provider OAuth token、refresh token、installation token
+- webhook / polling subscription、history cursor、page token、sync cursor
+- provider API call、provider-specific export / fetch、rate limit retry
+- provider object から Memory に送る canonical text への deterministic extraction
+- app-local event の batching / formatting と stable `app_ref`
+- provider sharing / membership / participant 情報から PrincipalMembership への同期
+
+Memory が持つもの:
+
+- app service credential と delegated principal の検証
+- app binding bootstrap、Source、MemorySpace、principal membership API
+- RawEvidence ingestion、write policy、lineage、mutation log
+- context / ask の access-controlled response
+
+connector は provider の raw event をそのまま細かく送るのではなく、Memory に入れる意味のある単位へまとめて ingestion します。deterministic な source text がある場合、LLM summary だけを canonical input として送ってはいけません。
+
+Memory がしないこと:
+
+- provider OAuth token や sync cursor を保存する。
+- Gmail / Google Calendar / Slack などの API を直接呼ぶ。
+- provider の object schema を canonical Memory object として再定義する。
+- provider 側の sharing / membership filter を信頼して unauthorized evidence を返す。
+
 ## Chat
 
 Chat の会話単位は、Memory では principal と MemorySpace に分解して扱います。
