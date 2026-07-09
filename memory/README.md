@@ -186,6 +186,8 @@ Memory が直接 grounded natural-language answer を生成して返します。
 
 `ask` response は assembled context や context id を返しません。Memory は内部では bounded ContextPack を作って回答生成に使いますが、アプリが evidence や context を必要とする場合は `context` を明示的に呼びます。
 
+`additional_context` は request の optional field です。request body は基本的に `{query, include_owner_containment}` ですが、app が未取り込みの直近会話など補足的な text を持っている場合、それを `additional_context` として渡せます。Memory はこれを「この 1 回の回答生成」だけに使い、app-supplied / unverified な grounding text として扱います。永続化しません（`ask` は rate/usage counter 以外何も永続化しません）。`citations` には決して含まれません — authorized evidence ではないため引用対象になりません。read scope は変えません — どの space を読むかは owner-containment が引き続き決定し、`additional_context` は追加の grounding text に過ぎません。schema-level `maxLength` で token 数の上限を設けています。
+
 ## Cross-Space Read
 
 cross-space read は `/v1/memory-spaces/{space_id}/{read_api}` に `include_owner_containment: true` を指定して行います。アプリが任意の space list を渡したり、Memory が返した後で unauthorized evidence をアプリ側 filter したりしてはいけません。
