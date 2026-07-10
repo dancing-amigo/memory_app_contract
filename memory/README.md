@@ -202,12 +202,13 @@ owner-containment は次の順で解決します。
 
 1. path の `space_id` から MemorySpace を解決する。
 2. その MemorySpace の owner principal を解決する。
-3. owner principal から principal containment をたどり、owner principal と containing principal を候補 owner にする。
-4. 候補 owner が owner の MemorySpace を読み取り候補にする。
+3. owner principal の effective user set を計算する。user principal の effective user set はその user 自身です。team / organization は active PrincipalMembership を再帰的にたどって member user を集めます。
+4. 候補 MemorySpace owner を、同じ owner、または path owner の effective user set を包含する team / organization owner に絞る。
+5. 候補 owner が owner の active MemorySpace を読み取り候補にする。
 
-user owner Space の場合は user 自身が owner の MemorySpace と、その user が属する team / organization が owner の MemorySpace を含められます。team owner Space の場合は team が owner の MemorySpace と containing organization が owner の MemorySpace を含められますが、member user が owner の personal Space は default では含みません。
+user owner Space の場合は user 自身が owner の MemorySpace と、その user を effective user set に含む team / organization が owner の MemorySpace を含められます。team owner Space の場合は team 自身が owner の MemorySpace と、その team の effective users をすべて含む team / organization owner の MemorySpace を含められます。member user が owner の personal Space は含みません。effective user set が空の group owner は、他の group owner を自動的には読めず、自分自身が owner の MemorySpace だけを含みます。
 
-MemorySpace containment relation は owner-containment の解決には使いません。アプリは sibling Space、child Space、任意の related Space を request body で追加してはいけません。
+MemorySpace containment relation は owner-containment の解決には使いません。アプリは sibling Space、child Space、任意の related Space を request body で追加してはいけません。owner-containment は PrincipalMembership から計算され、アプリが任意の owner set や MemorySpace list を指定する surface はありません。
 
 ## Binding Delete
 
