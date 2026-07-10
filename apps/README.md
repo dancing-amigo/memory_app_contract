@@ -59,6 +59,37 @@ Memory がしないこと:
 - provider の object schema を canonical Memory object として再定義する。
 - provider 側の sharing / membership filter を信頼して unauthorized evidence を返す。
 
+## AI Diary
+
+AI Diary は、1 人の app user に 1 つの専用 MemorySpace を割り当て、締切済みの 1 日を 1 つの RawEvidence として送ります。
+
+| AI Diary concept | Memory concept | Notes |
+| --- | --- | --- |
+| app user | `principal.type = user` | email ではなく provider-independent な stable app user ID を使う。 |
+| personal diary | user principal が owner の MemorySpace | `app_resource.type = personal_diary`。他アプリの personal space と共有しない。 |
+| closed diary day | RawEvidence | 確認済み entry を決定的に並べた daily raw。LLM summary ではない。 |
+| diary entry / chat message | direct Memory object ではない | entry は day 単位に batch し、Chat message は ingestion しない。 |
+
+代表的な Source:
+
+- `source_id`: stable app user ID から決定する AI Diary 専用 Source ID
+- `source_type`: `personal_diary_daily_raw`
+
+ingestion の `app_ref`:
+
+- `type`: `diary_day`
+- `id`: AI Diary 側の stable diary day ID
+- `occurred_at`: journal day の cutoff instant
+- `uri`: `aidiary://days/{diary_day_id}`
+
+read scope は常に `include_owner_containment: false` とし、binding された AI Diary 専用 MemorySpace だけを読みます。AI Diary の Chat question、answer、recent context は daily raw に混ぜません。
+
+Memory がしないこと:
+
+- AI Diary の entry、day、cutoff、chat schema を canonical Memory object として扱う。
+- `app_id = ai_diary` を理由に extraction、policy、retrieval を構造分岐する。
+- binding 削除を Memory data の削除と見なす。現契約に delete / redaction API がない間、AI Diary の production account deletion は未完了として扱う。
+
 ## Chat
 
 Chat の会話単位は、Memory では principal と MemorySpace に分解して扱います。
